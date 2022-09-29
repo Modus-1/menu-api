@@ -25,7 +25,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./menu-api
+        working-directory: menu-api
     strategy: 
       matrix: 
         os: [windows-latest]

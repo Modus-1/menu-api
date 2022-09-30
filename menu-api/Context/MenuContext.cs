@@ -12,9 +12,11 @@
         }
 
         public DbSet<MenuItem> MenuItems { get; set; }
+
         public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<MenuItem_Ingredient> MenuItems_Ingredients { get; set; }
-        //public DbSet<MenuItem_Ingredient> menuItems_Ingredients { get; set; }
+
+        public DbSet<MenuItem_Ingredient> MenuItemIngredients { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MenuItem_Ingredient>().HasKey(sc => new {sc.MenuItemId, sc.IngredientId});

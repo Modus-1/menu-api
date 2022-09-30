@@ -9,13 +9,16 @@
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
+
         public int? Stock { get; set; }
+
         public double? Weight { get; set; }
 
-        public string? Allergens { get; set; }
+        public string Allergens { get; set; } = string.Empty;
 
-        public IList<MenuItem_Ingredient> MenuItems_Ingredients { get; set; }
+        public IList<MenuItem_Ingredient> MenuItemIngredients { get; set; } = new List<MenuItem_Ingredient>();
     }
 }

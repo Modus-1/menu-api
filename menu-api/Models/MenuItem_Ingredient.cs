@@ -7,9 +7,11 @@
     public class MenuItem_Ingredient
     {
         public Guid MenuItemId { get; set; }
+
         public MenuItem menuItem { get; set; }
 
         public Guid IngredientId { get; set; }
+
         public Ingredient Ingredient { get; set; }
     }
 }

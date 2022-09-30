@@ -11,7 +11,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddDbContext<MenuContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:MenuConnStr"]));
+builder.Services.AddDbContext<MenuContext>(
+    options => options.UseSqlServer(
+        builder.Configuration["ConnectionStrings:MenuConnStr"]
+        )
+    );
 
 var app = builder.Build();
 

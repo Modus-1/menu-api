@@ -45,19 +45,21 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
+    - name: SonarCloud Begin
+      run: | 
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet sonarscanner begin /o:modus-1 /k:Modus-1_menu-api /d:sonar.login=${{ secrets.SONAR_TOKEN }} /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      with:
-        projectBaseDir: menu-api
+    - name: SonarCloud End
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   push:
     needs: [build_and_test]

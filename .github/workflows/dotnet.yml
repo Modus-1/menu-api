@@ -51,10 +51,6 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./menu-api
-
     steps:
 
     - uses: actions/checkout@v3
@@ -63,6 +59,7 @@ jobs:
         fetch-depth: 0
 
     - name: SonarCloud Scan
+      run: cd menu-api
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

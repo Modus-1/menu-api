@@ -53,8 +53,7 @@ jobs:
 
     defaults:
       run:
-        shell: bash
-        working-directory: menu-api
+        working-directory: ./menu-api
 
     steps:
 
@@ -73,11 +72,10 @@ jobs:
     needs: [build_and_test, sonarcloud]
     if: success() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    
+
     defaults:
       run:
-        shell: bash
-        working-directory: menu-api
+        working-directory: ./menu-api
     
     steps:
 

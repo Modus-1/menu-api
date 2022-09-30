@@ -2,7 +2,7 @@ name: .NET Core CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "MOD-34_improve-pipeline" ]
     paths-ignore:
       - '**.gitignore'
       - '**/README.md'
@@ -29,10 +29,14 @@ jobs:
         working-directory: menu-api
     strategy: 
       matrix: 
-        os: [windows-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -47,17 +51,6 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     
-  sonarcloud:
-    needs: build_and_test
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - uses: actions/checkout@v3
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
@@ -67,7 +60,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   push:
-    needs: [build_and_test, sonarcloud]
+    needs: [build_and_test]
     if: success() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     
@@ -82,6 +75,6 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v3.1.1
       with:
-        context: /menu-api
+        context: ./menu-api
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/modus-1:menu-api

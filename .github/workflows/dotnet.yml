@@ -63,6 +63,10 @@ jobs:
     needs: [build_and_test]
     if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/MOD-34_improve-pipeline')
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: menu-api
     
     steps:
 
@@ -75,6 +79,5 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v3.1.1
       with:
-        context: ./menu-api
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/modus-1:menu-api

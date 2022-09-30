@@ -75,6 +75,6 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v3.1.1
       with:
-        context: ./menu-api
+        context: /menu-api
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/modus-1:menu-api

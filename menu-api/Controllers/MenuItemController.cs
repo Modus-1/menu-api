@@ -14,14 +14,26 @@ namespace menu_api.Controllers
 
         public MenuItemController(MenuContext menuContext)
         {
-            this.menuItemRepository = new MenuItemRepository(menuContext);
-
+            menuItemRepository = new MenuItemRepository(menuContext);
         }
 
         [HttpGet]
         public IEnumerable<MenuItem> GetMenuItems()
         {
-            return this.menuItemRepository.GetMenuItems();
+            return menuItemRepository.GetMenuItems();
+        }
+
+        [HttpGet("{id}")]
+        public MenuItem GetMenuItemByID(Guid id)
+        {
+            return menuItemRepository.GetMenuItemByID(id);
+        }
+
+        [HttpPost]
+        public void InsertMenuItem(MenuItem menuItem)
+        {
+            menuItemRepository.InsertMenuItem(menuItem);
+            menuItemRepository.Save();
         }
 
     }

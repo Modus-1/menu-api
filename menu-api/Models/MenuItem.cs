@@ -29,6 +29,8 @@
 
         public int CategoryId { get; set; }
 
-        public IList<MenuItem_Ingredient> MenuItemIngredients { get; set; } = new List<MenuItem_Ingredient>();
+
+        
+        public List<MenuItem_Ingredient> Ingredients { get; set; }
     }
 }

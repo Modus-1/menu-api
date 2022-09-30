@@ -8,7 +8,7 @@
     {
         public Guid MenuItemId { get; set; }
 
-        public MenuItem menuItem { get; set; }
+        public MenuItem MenuItem { get; set; }
 
         public Guid IngredientId { get; set; }
 

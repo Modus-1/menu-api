@@ -2,7 +2,7 @@ name: .NET Core CI
 
 on:
   push:
-    branches: [ "main", "develop", "MOD-34_improve-pipeline" ]
+    branches: [ "main", "develop" ]
     paths-ignore:
       - '**.gitignore'
       - '**/README.md'
@@ -21,7 +21,6 @@ on:
       - '**/stylecop.json'
 jobs:
   build_and_test:
-    if: github.ref != 'refs/heads/MOD-34_improve-pipeline'
     runs-on: ${{ matrix.os }} 
 
     defaults:
@@ -61,8 +60,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   push:
-##    needs: [build_and_test]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/MOD-34_improve-pipeline')
+    needs: [build_and_test]
+    if: success() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     
     steps:

@@ -4,9 +4,9 @@ namespace menu_api.Repositories
 {
     public interface IMenuItem_IngredientRepository : IDisposable
     {
-        void AddIngredient(MenuItem_Ingredient menuItem_Ingredient);
+        Task AddIngredient(MenuItem_Ingredient menuItem_Ingredient);
         void Dispose();
-        void RemoveIngredient(Guid menuItemId, Guid ingredientId);
-        void RemoveIngredients(Guid menuItemId);
+        Task RemoveIngredient(Guid menuItemId, Guid ingredientId);
+        Task RemoveIngredients(Guid menuItemId);
     }
 }

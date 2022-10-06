@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories
 {
-    public class IngredientRepository : IIngredientRepository, IDisposable
+    public class IngredientRepository : IDisposable, IIngredientRepository
     {
         private MenuContext context;
         public IngredientRepository(MenuContext context)
@@ -13,30 +13,33 @@ namespace menu_api.Repositories
         }
 
 
-        public IEnumerable<Ingredient> GetAllIngredients()
+        public async Task<IEnumerable<Ingredient>?> GetAllIngredients()
         {
-            return context.Ingredients.ToList();
+            return await context.Ingredients.ToListAsync();
         }
-        public Ingredient GetIngredientByID(Guid ingredientId)
+        public async Task<Ingredient?> GetIngredientByID(Guid ingredientId)
         {
-            return context.Ingredients.Find(ingredientId);
+            return await context.Ingredients.FindAsync(ingredientId);
         }
-        public void InsertIngredient(Ingredient ingredient)
+        public async Task InsertIngredient(Ingredient ingredient)
         {
-            context.Ingredients.Add(ingredient);
-            context.SaveChanges();
+            await context.Ingredients.AddAsync(ingredient);
+            await context.SaveChangesAsync();
         }
 
-        public void DeleteIngredient(Guid ingriedientId)
+        public async Task DeleteIngredient(Guid ingriedientId)
         {
-            Ingredient ingredient = context.Ingredients.Find(ingriedientId);
-            context.Ingredients.Remove(ingredient);
-            context.SaveChanges();
+            Ingredient? ingredient = await context.Ingredients.FindAsync(ingriedientId);
+            if (ingredient != null)
+            {
+                context.Ingredients.Remove(ingredient);
+                await context.SaveChangesAsync();
+            }
         }
-        public void UpdateIngredient(Ingredient ingredient)
+        public async Task UpdateIngredient(Ingredient ingredient)
         {
-            context.Entry(ingredient).State = EntityState.Modified;
-            context.SaveChanges();
+            context.Ingredients.Update(ingredient);
+            await context.SaveChangesAsync();
         }
 
         private bool disposed = false;

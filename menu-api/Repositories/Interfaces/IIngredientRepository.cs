@@ -4,10 +4,11 @@ namespace menu_api.Repositories
 {
     public interface IIngredientRepository : IDisposable
     {
-        void DeleteIngredient(Guid ingriedientId);
-        IEnumerable<Ingredient> GetAllIngredients();
-        Ingredient GetIngredientByID(Guid ingredientId);
-        void InsertIngredient(Ingredient ingredient);
-        void UpdateIngredient(Ingredient ingredient);
+        Task DeleteIngredient(Guid ingriedientId);
+        void Dispose();
+        Task<IEnumerable<Ingredient>?> GetAllIngredients();
+        Task<Ingredient?> GetIngredientByID(Guid ingredientId);
+        Task InsertIngredient(Ingredient ingredient);
+        Task UpdateIngredient(Ingredient ingredient);
     }
 }

@@ -4,10 +4,11 @@ namespace menu_api.Repositories
 {
     public interface IMenuItemRepository : IDisposable
     {
-        IEnumerable<MenuItem> GetMenuItems();
-        MenuItem GetMenuItemByID(Guid menuItemId);
-        void InsertMenuItem(MenuItem menuItem);
-        void DeleteMenuItem(Guid menuItemId);
-        void UpdateMenuItem(MenuItem menuItem);
+        Task DeleteMenuItem(Guid menuItemId);
+        void Dispose();
+        Task<MenuItem?> GetMenuItemByID(Guid menuItemId);
+        Task<IEnumerable<MenuItem>?> GetMenuItems();
+        Task InsertMenuItem(MenuItem menuItem);
+        Task UpdateMenuItem(MenuItem menuItem);
     }
 }

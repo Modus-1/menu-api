@@ -20,49 +20,58 @@ namespace menu_api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<MenuItem> GetMenuItems()
+        public async Task<IEnumerable<MenuItem>> GetMenuItems()
         {
-            return menuItemRepository.GetMenuItems();
+            var menuItems = await menuItemRepository.GetMenuItems();
+            if (menuItems == null)
+            {
+                return Enumerable.Empty<MenuItem>();
+            }
+            else return menuItems; 
         }
 
         [HttpGet("{id}")]
-        public MenuItem GetMenuItemByID(Guid id)
+        public async Task<ActionResult<MenuItem>> GetMenuItemByID(Guid id)
         {
-            return menuItemRepository.GetMenuItemByID(id);
-            //menuItem.Ingredients = 
+            var menuItem = await menuItemRepository.GetMenuItemByID(id);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
+            else return menuItem;
         }
 
         [HttpPost]
-        public void InsertMenuItem(MenuItem menuItem)
+        public async Task InsertMenuItem(MenuItem menuItem)
         {
-            menuItemRepository.InsertMenuItem(menuItem);
+            await menuItemRepository.InsertMenuItem(menuItem);
         }
 
 
         [HttpDelete("{id}")]
-        public void DeleteMenuItem(Guid id)
+        public async Task DeleteMenuItem(Guid id)
         {
-            menuItemIngredientRepository.RemoveIngredients(id);
-            menuItemRepository.DeleteMenuItem(id);
+            await menuItemIngredientRepository.RemoveIngredients(id);
+            await menuItemRepository.DeleteMenuItem(id);
         }
 
         [HttpPatch]
-        public void UpdateMenuItem(MenuItem menuItem)
+        public async Task UpdateMenuItem(MenuItem menuItem)
         {
-            menuItemRepository.UpdateMenuItem(menuItem);
+            await menuItemRepository.UpdateMenuItem(menuItem);
         }
 
 
 
         [HttpPost("ingredient")]
-        public void AddIngredientToMenuItem(MenuItem_Ingredient menuItem_Ingredient)
+        public async Task AddIngredientToMenuItem(MenuItem_Ingredient menuItem_Ingredient)
         {
-            menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
+            await menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
         }
         [HttpDelete("ingredient")]
-        public void DeleteIngredientFromMenuItem(Guid id, Guid ingredientId)
+        public async Task DeleteIngredientFromMenuItem(Guid id, Guid ingredientId)
         {
-            menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
+            await menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
         }
     }
 }

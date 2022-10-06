@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories
 {
-    public class MenuItemRepository : IMenuItemRepository, IDisposable
+    public class MenuItemRepository : IDisposable, IMenuItemRepository
     {
         private MenuContext context;
 
@@ -17,30 +17,36 @@ namespace menu_api.Repositories
             this.context = context;
         }
 
-        public IEnumerable<MenuItem> GetMenuItems()
+        public async Task<IEnumerable<MenuItem>?> GetMenuItems()
         {
-            return context.MenuItems.Include(c => c.Ingredients)
-                .ToList();
+            return await context.MenuItems
+                .Include(c => c.Ingredients)
+                .ToListAsync();
         }
-        public MenuItem GetMenuItemByID(Guid menuItemId)
+        public async Task<MenuItem?> GetMenuItemByID(Guid menuItemId)
         {
-            return context.MenuItems.Find(menuItemId);
+            return await context.MenuItems
+                .Include(c => c.Ingredients)
+                .FirstOrDefaultAsync(m => m.Id == menuItemId);
         }
-        public void InsertMenuItem(MenuItem menuItem)
+        public async Task InsertMenuItem(MenuItem menuItem)
         {
-            context.MenuItems.Add(menuItem);
-            context.SaveChanges();
+            await context.MenuItems.AddAsync(menuItem);
+            await context.SaveChangesAsync();
         }
-        public void DeleteMenuItem(Guid menuItemId)
+        public async Task DeleteMenuItem(Guid menuItemId)
         {
-            MenuItem menuItem = context.MenuItems.Find(menuItemId);
-            context.MenuItems.Remove(menuItem);
-            context.SaveChanges();
+            MenuItem? menuItem = await context.MenuItems.FindAsync(menuItemId);
+            if (menuItem != null)
+            {
+                context.MenuItems.Remove(menuItem);
+                await context.SaveChangesAsync();
+            }
         }
-        public void UpdateMenuItem(MenuItem menuItem)
+        public async Task UpdateMenuItem(MenuItem menuItem)
         {
-            context.Entry(menuItem).State = EntityState.Modified;
-            context.SaveChanges();
+            context.MenuItems.Update(menuItem);
+            await context.SaveChangesAsync();
         }
 
 

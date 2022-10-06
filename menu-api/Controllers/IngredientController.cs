@@ -17,33 +17,44 @@ namespace menu_api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Ingredient> GetAllIngredients()
+        public async Task<IEnumerable<Ingredient>> GetAllIngredients()
         {
-            return ingredientRepository.GetAllIngredients();
+            var ingredients = await ingredientRepository.GetAllIngredients();
+            if (ingredients == null)
+            {
+                return Enumerable.Empty<Ingredient>();
+            }
+            else return ingredients;
         }
 
         [HttpGet("{id}")]
-        public Ingredient GetIngredientById(Guid id)
+        public async Task<ActionResult<Ingredient>> GetIngredientById(Guid id)
         {
-            return ingredientRepository.GetIngredientByID(id);
+            var ingredient = await ingredientRepository.GetIngredientByID(id);
+            if (ingredient == null)
+            {
+                return NotFound();
+            }
+            else return ingredient;
+
         }
 
         [HttpPost]
-        public void InsertIngredient(Ingredient ingredient)
+        public async Task InsertIngredient(Ingredient ingredient)
         {
-            ingredientRepository.InsertIngredient(ingredient);
+            await ingredientRepository.InsertIngredient(ingredient);
         }
 
         [HttpDelete("{id}")]
-        public void DeleteIngredient(Guid id)
+        public async Task DeleteIngredient(Guid id)
         {
-            ingredientRepository.DeleteIngredient(id);
+            await ingredientRepository.DeleteIngredient(id);
         }
 
         [HttpPatch]
-        public void UpdateIngredient(Ingredient ingredient)
+        public async Task UpdateIngredient(Ingredient ingredient)
         {
-            ingredientRepository.UpdateIngredient(ingredient);
+            await ingredientRepository.UpdateIngredient(ingredient);
         }
     }
 }

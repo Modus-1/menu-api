@@ -18,7 +18,5 @@
         public double? Weight { get; set; }
 
         public string Allergens { get; set; } = string.Empty;
-
-        public IList<MenuItem_Ingredient> MenuItemIngredients { get; set; } = new List<MenuItem_Ingredient>();
     }
 }

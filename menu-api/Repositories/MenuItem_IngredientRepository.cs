@@ -3,9 +3,9 @@ using menu_api.Models;
 
 namespace menu_api.Repositories
 {
-    public class MenuItem_IngredientRepository : IDisposable, IMenuItem_IngredientRepository
+    public class MenuItem_IngredientRepository : IMenuItem_IngredientRepository
     {
-        private MenuContext context;
+        private readonly MenuContext context;
         public MenuItem_IngredientRepository(MenuContext context)
         {
             this.context = context;
@@ -39,24 +39,5 @@ namespace menu_api.Repositories
             await context.SaveChangesAsync();
         }
 
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

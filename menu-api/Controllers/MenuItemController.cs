@@ -9,8 +9,8 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class MenuItemController : ControllerBase
     {
-        private IMenuItemRepository menuItemRepository;
-        private IMenuItem_IngredientRepository menuItemIngredientRepository;
+        private readonly IMenuItemRepository menuItemRepository;
+        private readonly IMenuItem_IngredientRepository menuItemIngredientRepository;
 
 
         public MenuItemController(MenuContext menuContext)

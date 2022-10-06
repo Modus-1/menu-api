@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories
 {
-    public class MenuItemRepository : IDisposable, IMenuItemRepository
+    public class MenuItemRepository : IMenuItemRepository
     {
-        private MenuContext context;
+        private readonly MenuContext context;
 
         public MenuItemRepository(MenuContext context)
         {
@@ -50,25 +50,5 @@ namespace menu_api.Repositories
         }
 
 
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

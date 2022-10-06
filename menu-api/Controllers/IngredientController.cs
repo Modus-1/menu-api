@@ -9,7 +9,7 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class IngredientController : ControllerBase
     {
-        private IIngredientRepository ingredientRepository;
+        private readonly IIngredientRepository ingredientRepository;
 
         public IngredientController(MenuContext context)
         {

@@ -9,6 +9,5 @@ namespace menu_api.Repositories
         void InsertMenuItem(MenuItem menuItem);
         void DeleteMenuItem(Guid menuItemId);
         void UpdateMenuItem(MenuItem menuItem);
-        void Save();
     }
 }

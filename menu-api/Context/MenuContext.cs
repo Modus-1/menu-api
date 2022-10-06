@@ -19,6 +19,8 @@
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MenuItem_Ingredient>().HasKey(sc => new { sc.MenuItemId, sc.IngredientId });
+            
+
         }
     }
 }

@@ -1,49 +1,43 @@
 ﻿using menu_api.Context;
 using menu_api.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories
 {
-    public class MenuItemRepository : IMenuItemRepository, IDisposable
+    public class IngredientRepository : IIngredientRepository, IDisposable
     {
         private MenuContext context;
-
-        public MenuItemRepository(MenuContext context)
+        public IngredientRepository(MenuContext context)
         {
             this.context = context;
         }
 
-        public IEnumerable<MenuItem> GetMenuItems()
+
+        public IEnumerable<Ingredient> GetAllIngredients()
         {
-            return context.MenuItems.Include(c => c.Ingredients)
-                .ToList();
+            return context.Ingredients.ToList();
         }
-        public MenuItem GetMenuItemByID(Guid menuItemId)
+        public Ingredient GetIngredientByID(Guid ingredientId)
         {
-            return context.MenuItems.Find(menuItemId);
+            return context.Ingredients.Find(ingredientId);
         }
-        public void InsertMenuItem(MenuItem menuItem)
+        public void InsertIngredient(Ingredient ingredient)
         {
-            context.MenuItems.Add(menuItem);
-            context.SaveChanges();
-        }
-        public void DeleteMenuItem(Guid menuItemId)
-        {
-            MenuItem menuItem = context.MenuItems.Find(menuItemId);
-            context.MenuItems.Remove(menuItem);
-            context.SaveChanges();
-        }
-        public void UpdateMenuItem(MenuItem menuItem)
-        {
-            context.Entry(menuItem).State = EntityState.Modified;
+            context.Ingredients.Add(ingredient);
             context.SaveChanges();
         }
 
-
+        public void DeleteIngredient(Guid ingriedientId)
+        {
+            Ingredient ingredient = context.Ingredients.Find(ingriedientId);
+            context.Ingredients.Remove(ingredient);
+            context.SaveChanges();
+        }
+        public void UpdateIngredient(Ingredient ingredient)
+        {
+            context.Entry(ingredient).State = EntityState.Modified;
+            context.SaveChanges();
+        }
 
         private bool disposed = false;
 

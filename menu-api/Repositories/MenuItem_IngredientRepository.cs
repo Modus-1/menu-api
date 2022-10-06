@@ -6,6 +6,7 @@ namespace menu_api.Repositories
     public class MenuItem_IngredientRepository : IMenuItem_IngredientRepository
     {
         private readonly MenuContext context;
+
         public MenuItem_IngredientRepository(MenuContext context)
         {
             this.context = context;
@@ -38,6 +39,5 @@ namespace menu_api.Repositories
             context.MenuItem_Ingredients.RemoveRange(menuItem_Ingredients);
             await context.SaveChangesAsync();
         }
-
     }
 }

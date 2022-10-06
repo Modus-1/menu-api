@@ -1,9 +1,5 @@
 ﻿using menu_api.Context;
 using menu_api.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories
@@ -23,17 +19,20 @@ namespace menu_api.Repositories
                 .Include(c => c.Ingredients)
                 .ToListAsync();
         }
+
         public async Task<MenuItem?> GetMenuItemByID(Guid menuItemId)
         {
             return await context.MenuItems
                 .Include(c => c.Ingredients)
                 .FirstOrDefaultAsync(m => m.Id == menuItemId);
         }
+
         public async Task InsertMenuItem(MenuItem menuItem)
         {
             await context.MenuItems.AddAsync(menuItem);
             await context.SaveChangesAsync();
         }
+
         public async Task DeleteMenuItem(Guid menuItemId)
         {
             MenuItem? menuItem = await context.MenuItems.FindAsync(menuItemId);
@@ -43,12 +42,11 @@ namespace menu_api.Repositories
                 await context.SaveChangesAsync();
             }
         }
+
         public async Task UpdateMenuItem(MenuItem menuItem)
         {
             context.MenuItems.Update(menuItem);
             await context.SaveChangesAsync();
         }
-
-
     }
 }

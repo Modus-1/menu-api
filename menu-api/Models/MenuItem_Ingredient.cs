@@ -9,7 +9,6 @@
         public Guid MenuItemId { get; set; }
         public Guid IngredientId { get; set; }
         
-
         public int? Amount { get; set; }
         public int? Weight { get; set; }
     }

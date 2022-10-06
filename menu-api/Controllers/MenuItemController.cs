@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using menu_api.Context;
 using menu_api.Models;
 using menu_api.Repositories;
-using menu_api.Context;
+using Microsoft.AspNetCore.Mvc;
 
 namespace menu_api.Controllers
 {
@@ -11,7 +11,6 @@ namespace menu_api.Controllers
     {
         private readonly IMenuItemRepository menuItemRepository;
         private readonly IMenuItem_IngredientRepository menuItemIngredientRepository;
-
 
         public MenuItemController(MenuContext menuContext)
         {
@@ -27,7 +26,7 @@ namespace menu_api.Controllers
             {
                 return Enumerable.Empty<MenuItem>();
             }
-            else return menuItems; 
+            return menuItems;
         }
 
         [HttpGet("{id}")]
@@ -38,7 +37,7 @@ namespace menu_api.Controllers
             {
                 return NotFound();
             }
-            else return menuItem;
+            return menuItem;
         }
 
         [HttpPost]
@@ -46,7 +45,6 @@ namespace menu_api.Controllers
         {
             await menuItemRepository.InsertMenuItem(menuItem);
         }
-
 
         [HttpDelete("{id}")]
         public async Task DeleteMenuItem(Guid id)
@@ -61,13 +59,12 @@ namespace menu_api.Controllers
             await menuItemRepository.UpdateMenuItem(menuItem);
         }
 
-
-
         [HttpPost("ingredient")]
         public async Task AddIngredientToMenuItem(MenuItem_Ingredient menuItem_Ingredient)
         {
             await menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
         }
+
         [HttpDelete("ingredient")]
         public async Task DeleteIngredientFromMenuItem(Guid id, Guid ingredientId)
         {

@@ -7,26 +7,27 @@ namespace menu_api.Repositories
     public class IngredientRepository : IIngredientRepository
     {
         private readonly MenuContext context;
+
         public IngredientRepository(MenuContext context)
         {
             this.context = context;
         }
 
-
         public async Task<IEnumerable<Ingredient>?> GetAllIngredients()
         {
             return await context.Ingredients.ToListAsync();
         }
+
         public async Task<Ingredient?> GetIngredientByID(Guid ingredientId)
         {
             return await context.Ingredients.FindAsync(ingredientId);
         }
+
         public async Task InsertIngredient(Ingredient ingredient)
         {
             await context.Ingredients.AddAsync(ingredient);
             await context.SaveChangesAsync();
         }
-
         public async Task DeleteIngredient(Guid ingriedientId)
         {
             Ingredient? ingredient = await context.Ingredients.FindAsync(ingriedientId);
@@ -36,11 +37,11 @@ namespace menu_api.Repositories
                 await context.SaveChangesAsync();
             }
         }
+
         public async Task UpdateIngredient(Ingredient ingredient)
         {
             context.Ingredients.Update(ingredient);
             await context.SaveChangesAsync();
         }
-
     }
 }

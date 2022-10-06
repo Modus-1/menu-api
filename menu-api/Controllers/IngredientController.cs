@@ -24,7 +24,7 @@ namespace menu_api.Controllers
             {
                 return Enumerable.Empty<Ingredient>();
             }
-            else return ingredients;
+            return ingredients;
         }
 
         [HttpGet("{id}")]
@@ -35,8 +35,7 @@ namespace menu_api.Controllers
             {
                 return NotFound();
             }
-            else return ingredient;
-
+            return ingredient;
         }
 
         [HttpPost]

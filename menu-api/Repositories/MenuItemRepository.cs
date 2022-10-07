@@ -29,8 +29,16 @@ namespace menu_api.Repositories
 
         public async Task InsertMenuItem(MenuItem menuItem)
         {
-            await context.MenuItems.AddAsync(menuItem);
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.MenuItems.AddAsync(menuItem);
+                await context.SaveChangesAsync();
+            }
+            catch (System.ArgumentException)
+            {
+                throw new ItemAlreadyExsits();
+            }
+            
         }
 
         public async Task DeleteMenuItem(Guid menuItemId)

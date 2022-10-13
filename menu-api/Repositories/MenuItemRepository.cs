@@ -36,7 +36,7 @@ namespace menu_api.Repositories
             }
             catch (System.ArgumentException)
             {
-                throw new ItemAlreadyExsits();
+                throw new ItemAlreadyExsists();
             }
             
         }

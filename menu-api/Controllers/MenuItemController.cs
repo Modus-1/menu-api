@@ -21,12 +21,7 @@ namespace menu_api.Controllers
         [HttpGet]
         public async Task<IEnumerable<MenuItem>> GetMenuItems()
         {
-            var menuItems = await menuItemRepository.GetMenuItems();
-            if (menuItems == null)
-            {
-                return Enumerable.Empty<MenuItem>();
-            }
-            return menuItems;
+            return await menuItemRepository.GetMenuItems();
         }
 
         [HttpGet("{id}")]

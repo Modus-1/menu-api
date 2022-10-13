@@ -49,7 +49,7 @@ namespace menu_api.Controllers
         [HttpDelete("{id}")]
         public async Task DeleteMenuItem(Guid id)
         {
-            await menuItemIngredientRepository.RemoveIngredients(id);
+            await menuItemIngredientRepository.RemoveAllIngredients(id);
             await menuItemRepository.DeleteMenuItem(id);
         }
 

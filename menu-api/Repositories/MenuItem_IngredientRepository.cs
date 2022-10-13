@@ -32,7 +32,7 @@ namespace menu_api.Repositories
         }
 
         //remove all ingredients from menuItem
-        public async Task RemoveIngredients(Guid menuItemId)
+        public async Task RemoveAllIngredients(Guid menuItemId)
         {
             IEnumerable<MenuItem_Ingredient> menuItem_Ingredients = context.MenuItem_Ingredients
                 .Where(x => x.MenuItemId == menuItemId);

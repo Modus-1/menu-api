@@ -25,8 +25,15 @@ namespace menu_api.Repositories
 
         public async Task InsertIngredient(Ingredient ingredient)
         {
-            await context.Ingredients.AddAsync(ingredient);
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.Ingredients.AddAsync(ingredient);
+                await context.SaveChangesAsync();
+            }
+            catch (System.ArgumentException)
+            {
+                throw new ItemAlreadyExsists();
+            }
         }
         public async Task DeleteIngredient(Guid ingriedientId)
         {

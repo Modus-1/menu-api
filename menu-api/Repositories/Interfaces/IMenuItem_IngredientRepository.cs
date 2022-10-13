@@ -6,6 +6,6 @@ namespace menu_api.Repositories
     {
         Task AddIngredient(MenuItem_Ingredient menuItem_Ingredient);
         Task RemoveIngredient(Guid menuItemId, Guid ingredientId);
-        Task RemoveIngredients(Guid menuItemId);
+        Task RemoveAllIngredients(Guid menuItemId);
     }
 }

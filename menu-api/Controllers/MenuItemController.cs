@@ -12,10 +12,10 @@ namespace menu_api.Controllers
         private readonly IMenuItemRepository menuItemRepository;
         private readonly IMenuItem_IngredientRepository menuItemIngredientRepository;
 
-        public MenuItemController(MenuContext menuContext)
+        public MenuItemController(IMenuItemRepository MenuItemRepo, IMenuItem_IngredientRepository MenuItem_IngredientRepo )
         {
-            menuItemRepository = new MenuItemRepository(menuContext);
-            menuItemIngredientRepository = new MenuItem_IngredientRepository(menuContext);
+            menuItemRepository = MenuItemRepo;
+            menuItemIngredientRepository = MenuItem_IngredientRepo;
         }
 
         [HttpGet]

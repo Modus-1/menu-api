@@ -1,21 +1,26 @@
 using menu_api.Context;
+using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<MenuContext>(
+    options => options.UseSqlServer(
+        builder.Configuration["ConnectionStrings:MenuConnStr"]
+        )
+    );
+
+builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IMenuItem_IngredientRepository, MenuItem_IngredientRepository>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-builder.Services.AddDbContext<MenuContext>(
-    options => options.UseSqlServer(
-        builder.Configuration["ConnectionStrings:MenuConnStr"]
-        )
-    );
 
 var app = builder.Build();
 

@@ -11,9 +11,9 @@ namespace menu_api.Controllers
     {
         private readonly IIngredientRepository ingredientRepository;
 
-        public IngredientController(MenuContext context)
+        public IngredientController(IIngredientRepository IngredientRepo)
         {
-            ingredientRepository = new IngredientRepository(context);
+            ingredientRepository = IngredientRepo;
         }
 
         [HttpGet]

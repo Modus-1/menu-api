@@ -109,7 +109,8 @@ namespace menu_api.Tests
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
-                Amount = 12
+                Amount = 12,
+                Weight = 1990
             };
 
             await _repository.AddIngredient(menuItem_Ingredient);

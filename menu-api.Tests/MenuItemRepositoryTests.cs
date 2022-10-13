@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FluentAssertions;
+using menu_api.Context;
+using menu_api.Models;
+using menu_api.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 using Xunit;
-using Moq;
-using menu_api.Repositories;
-using menu_api.Models;
-using menu_api.Context;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.InMemory;
-using FluentAssertions;
 
 namespace menu_api.Tests
 {
@@ -90,7 +85,8 @@ namespace menu_api.Tests
         public async Task InsertMenuItem_ShouldPopulateTable_WithTheMenuItem()
         {
             //arrange
-            var menuItem = new MenuItem {
+            var menuItem = new MenuItem
+            {
                 Id = Guid.NewGuid(),
                 Name = "erikse-kaas-souffle",
                 IconUrl = "Https://Minecraft.net/",
@@ -131,9 +127,101 @@ namespace menu_api.Tests
             //act
             await _repository.InsertMenuItem(menuItem);
 
+            //assert
+            await Assert.ThrowsAsync<ItemAlreadyExsists>(async () => await _repository.InsertMenuItem(menuItem));
+        }
+
+        [Fact]
+        public async Task DeleteMenuItem_ShouldDelete_PopulatedTable()
+        {
+            //arrange
+            var menuItem = new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas-souffle",
+                IconUrl = "Https://Minecraft.net/",
+                BannerUrl = "Https://Minecraft.net/",
+                LongDescription = "lang",
+                ShortDescription = "kort",
+                Price = 34.90,
+                CategoryId = 3
+            };
+
+            var menuItem2 = new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas-souffle2",
+                IconUrl = "Https://Minecraft.net/",
+                BannerUrl = "Https://Minecraft.net/",
+                LongDescription = "lang",
+                ShortDescription = "kort",
+                Price = 34.90,
+                CategoryId = 3
+            };
+
+            await _repository.InsertMenuItem(menuItem);
+            await _repository.InsertMenuItem(menuItem2);
+
+            //act
+            await _repository.DeleteMenuItem(menuItem.Id);
+
+            var newMenuItem = await _repository.GetMenuItemByID(menuItem.Id); //Should return null because it was previously deleted
+            var newMenuItem2 = await _repository.GetMenuItemByID(menuItem2.Id); //Should return menuItem2 because it was not deleted
 
             //assert
-            await Assert.ThrowsAsync<ItemAlreadyExsits>(async () => await _repository.InsertMenuItem(menuItem));
+            Assert.Null(newMenuItem);
+            Assert.NotNull(newMenuItem2);
         }
+
+        [Fact]
+        public async Task UpdateMenuItem_ShouldUpdatePopulatedTable()
+        {
+            //arrange
+            var menuItem = new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas-souffle",
+                IconUrl = "Https://Minecraft.net/",
+                BannerUrl = "Https://Minecraft.net/",
+                LongDescription = "lang",
+                ShortDescription = "kort",
+                Price = 34.90,
+                CategoryId = 3
+            };
+
+            var oldMenuItemCopy = new MenuItem
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                IconUrl = menuItem.IconUrl,
+                BannerUrl = menuItem.BannerUrl,
+                LongDescription = menuItem.LongDescription,
+                ShortDescription = menuItem.ShortDescription,
+                Price = menuItem.Price,
+                CategoryId = menuItem.CategoryId
+            };
+
+            await _repository.InsertMenuItem(menuItem);
+
+            //act
+            menuItem.Name = "boterham met kaas";
+            menuItem.IconUrl = "https://kanikeenkortebroekaan.nl/";
+            menuItem.BannerUrl = "https://kanikeenkortebroekaan.nl/";
+            menuItem.LongDescription = "extra lang";
+            menuItem.ShortDescription = "extra kort";
+            menuItem.Price = 12.34;
+            menuItem.CategoryId = 2;
+
+            await _repository.UpdateMenuItem(menuItem);
+            var updatedMenuItem = await _repository.GetMenuItemByID(menuItem.Id);
+
+
+            //asserts
+            updatedMenuItem.Should()
+                .NotBeNull()
+                .And.NotBeEquivalentTo(oldMenuItemCopy)
+                .And.BeEquivalentTo(menuItem);
+        }
+
     }
 }

@@ -170,6 +170,7 @@ namespace menu_api.Tests
                 Id = Guid.NewGuid(),
                 Name = "erikse-kaas",
                 Stock = 10,
+                Weight = 9001,
                 Allergens = "melkies ofz"
             };
 

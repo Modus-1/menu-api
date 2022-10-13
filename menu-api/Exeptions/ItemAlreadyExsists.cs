@@ -9,16 +9,5 @@ namespace menu_api
         {
         }
 
-        public ItemAlreadyExsists(string? message) : base(message)
-        {
-        }
-
-        public ItemAlreadyExsists(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected ItemAlreadyExsists(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

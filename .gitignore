@@ -33,3 +33,6 @@ TestResults/
 
 # Visual Studio
 .vs/
+
+#migrations
+Migrations/

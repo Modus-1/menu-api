@@ -60,6 +60,7 @@ namespace menu_api.Repositories
         {
             if (await GetMenuItemByID(menuItem.Id) != null)
             {
+                context.ChangeTracker.Clear();
                 context.MenuItems.Update(menuItem);
                 await context.SaveChangesAsync();
             }

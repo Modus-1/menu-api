@@ -52,9 +52,15 @@ namespace menu_api.Repositories
 
         public async Task UpdateIngredient(Ingredient ingredient)
         {
-            if (await GetIngredientByID(ingredient.Id) != null)
+
+            
+
+            var _ingredient = await context.Ingredients.SingleOrDefaultAsync(i => i.Id == ingredient.Id);
+
+            if (_ingredient != null)
             {
-                context.Ingredients.Update(ingredient);
+                context.ChangeTracker.Clear();
+                context.Update(ingredient);
                 await context.SaveChangesAsync();
             }
             else

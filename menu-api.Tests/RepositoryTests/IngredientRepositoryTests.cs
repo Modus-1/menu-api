@@ -160,6 +160,25 @@ namespace menu_api.Tests.RepositoryTests
             Assert.NotNull(newIngredient2);
         }
 
+        [Fact]
+        public async Task DeleteIngredient_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
+        {
+            //arrange
+            var ingredient = new Ingredient
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas",
+                Stock = 10,
+                Allergens = "melkies ofz"
+            };
+
+            //act
+            var function = async () => await _repository.DeleteIngredient(ingredient.Id);
+
+            //assert
+            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+        }
+
 
 
         [Fact]
@@ -199,6 +218,25 @@ namespace menu_api.Tests.RepositoryTests
                 .NotBeNull()
                 .And.NotBeEquivalentTo(OldIngredientCopy)
                 .And.BeEquivalentTo(ingredient);
+        }
+
+        [Fact]
+        public async Task UpdateIngredient_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
+        {
+            //arrange
+            var ingredient = new Ingredient
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas",
+                Stock = 10,
+                Allergens = "melkies ofz"
+            };
+
+            //act
+            var function = async () => await _repository.UpdateIngredient(ingredient);
+
+            //assert
+            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
         }
     }
 }

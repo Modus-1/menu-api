@@ -30,16 +30,12 @@ namespace menu_api.Repositories
 
         public async Task InsertMenuItem(MenuItem menuItem)
         {
-            try
+            if (await GetMenuItemByID(menuItem.Id) == null)
             {
                 await context.MenuItems.AddAsync(menuItem);
                 await context.SaveChangesAsync();
             }
-            catch (System.ArgumentException)
-            {
-                throw new ItemAlreadyExsistsExeption();
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+            else
             {
                 throw new ItemAlreadyExsistsExeption();
             }
@@ -62,12 +58,12 @@ namespace menu_api.Repositories
 
         public async Task UpdateMenuItem(MenuItem menuItem)
         {
-            try
+            if (await GetMenuItemByID(menuItem.Id) != null)
             {
                 context.MenuItems.Update(menuItem);
                 await context.SaveChangesAsync();
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
+            else
             {
                 throw new ItemDoesNotExistExeption();
             }

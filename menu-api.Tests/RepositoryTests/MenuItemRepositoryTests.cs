@@ -174,6 +174,30 @@ namespace menu_api.Tests.RepositoryTests
             Assert.NotNull(newMenuItem2);
         }
 
+
+        [Fact]
+        public async Task DeleteMenuItem_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
+        {
+            //arrange
+            var menuItem = new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas-souffle",
+                IconUrl = "Https://Minecraft.net/",
+                BannerUrl = "Https://Minecraft.net/",
+                LongDescription = "lang",
+                ShortDescription = "kort",
+                Price = 34.90,
+                CategoryId = 3
+            };
+
+            //act
+            var function = async () => await _repository.DeleteMenuItem(menuItem.Id);
+
+            //assert
+            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+        }
+
         [Fact]
         public async Task UpdateMenuItem_ShouldUpdatePopulatedTable()
         {
@@ -222,6 +246,29 @@ namespace menu_api.Tests.RepositoryTests
                 .NotBeNull()
                 .And.NotBeEquivalentTo(oldMenuItemCopy)
                 .And.BeEquivalentTo(menuItem);
+        }
+
+        [Fact]
+        public async Task UpdateMenuItem_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
+        {
+            //arrange
+            var menuItem = new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = "erikse-kaas-souffle",
+                IconUrl = "Https://Minecraft.net/",
+                BannerUrl = "Https://Minecraft.net/",
+                LongDescription = "lang",
+                ShortDescription = "kort",
+                Price = 34.90,
+                CategoryId = 3
+            };
+
+            //act
+            var function = async () => await _repository.UpdateMenuItem(menuItem);
+
+            //assert
+            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
         }
 
     }

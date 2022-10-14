@@ -17,18 +17,27 @@ namespace menu_api.Repositories
         public async Task AddIngredient(MenuItem_Ingredient menuItem_Ingredient)
         {
             var ingredient = await context.Ingredients.FindAsync(menuItem_Ingredient.IngredientId);
-            if (ingredient == null) { throw new ItemDoesNotExistExeption("Ingredient"); }
+            var menuItem = await context.MenuItems.FindAsync(menuItem_Ingredient.MenuItemId);
 
-            try
+            var _menuItem_Ingredient = await context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
+
+            if (_menuItem_Ingredient == null && ingredient != null && menuItem !=null)
             {
                 await context.MenuItem_Ingredients.AddAsync(menuItem_Ingredient);
                 await context.SaveChangesAsync();
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+            else if (_menuItem_Ingredient != null)
+            {
+                throw new ItemAlreadyExsistsExeption();
+            }
+            else if (menuItem == null)
             {
                 throw new ItemDoesNotExistExeption("MenuItem");
             }
-            
+            else if (ingredient == null)
+            {
+                throw new ItemDoesNotExistExeption("Ingredient");
+            }
         }
 
         //remove ingredient from menuItem
@@ -36,6 +45,7 @@ namespace menu_api.Repositories
         {
             MenuItem_Ingredient? menuItem_Ingredient = await context.MenuItem_Ingredients
                 .FindAsync(menuItemId, ingredientId);
+
             if (menuItem_Ingredient != null)
             {
                 context.MenuItem_Ingredients.Remove(menuItem_Ingredient);
@@ -50,10 +60,19 @@ namespace menu_api.Repositories
         //remove all ingredients from menuItem
         public async Task RemoveAllIngredients(Guid menuItemId)
         {
-            IEnumerable<MenuItem_Ingredient> menuItem_Ingredients = context.MenuItem_Ingredients
+            var menuItem = await context.MenuItems.FindAsync(menuItemId);
+
+            if (menuItem != null)
+            {
+                IEnumerable<MenuItem_Ingredient> menuItem_Ingredients = context.MenuItem_Ingredients
                 .Where(x => x.MenuItemId == menuItemId);
-            context.MenuItem_Ingredients.RemoveRange(menuItem_Ingredients);
-            await context.SaveChangesAsync();
+                context.MenuItem_Ingredients.RemoveRange(menuItem_Ingredients);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ItemDoesNotExistExeption("MenuItem");
+            }
         }
     }
 }

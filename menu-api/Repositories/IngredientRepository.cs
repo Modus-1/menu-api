@@ -26,16 +26,12 @@ namespace menu_api.Repositories
 
         public async Task InsertIngredient(Ingredient ingredient)
         {
-            try
+            if (await GetIngredientByID(ingredient.Id) == null)
             {
                 await context.Ingredients.AddAsync(ingredient);
                 await context.SaveChangesAsync();
             }
-            catch (System.ArgumentException)
-            {
-                throw new ItemAlreadyExsistsExeption();
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+            else
             {
                 throw new ItemAlreadyExsistsExeption();
             }
@@ -56,12 +52,12 @@ namespace menu_api.Repositories
 
         public async Task UpdateIngredient(Ingredient ingredient)
         {
-            try
+            if (await GetIngredientByID(ingredient.Id) != null)
             {
                 context.Ingredients.Update(ingredient);
                 await context.SaveChangesAsync();
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
+            else
             {
                 throw new ItemDoesNotExistExeption();
             }

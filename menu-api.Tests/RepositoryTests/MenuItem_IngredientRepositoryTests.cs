@@ -7,7 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace menu_api.Tests
+namespace menu_api.Tests.RepositoryTests
 {
     public class MenuItem_IngredientRepositoryTests : IDisposable
     {
@@ -41,7 +41,8 @@ namespace menu_api.Tests
                 IngredientId = Guid.NewGuid(),
                 Amount = 10
             };
-
+            _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
             //act
             await _repository.AddIngredient(menuItem_Ingredient);
             var result = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
@@ -69,6 +70,12 @@ namespace menu_api.Tests
                 IngredientId = Guid.NewGuid(),
                 Amount = 10
             };
+            _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
+
+            _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient2.MenuItemId });
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient2.IngredientId });
+
             await _repository.AddIngredient(menuItem_Ingredient);
             await _repository.AddIngredient(menuItem_Ingredient2);
 
@@ -112,6 +119,13 @@ namespace menu_api.Tests
                 Amount = 12,
                 Weight = 1990
             };
+            _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
+
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient2.IngredientId });
+
+            _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient3.MenuItemId });
+            _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient3.IngredientId });
 
             await _repository.AddIngredient(menuItem_Ingredient);
             await _repository.AddIngredient(menuItem_Ingredient2);

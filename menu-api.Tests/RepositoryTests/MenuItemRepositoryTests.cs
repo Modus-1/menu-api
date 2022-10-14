@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using menu_api.Exeptions;
 
-namespace menu_api.Tests
+namespace menu_api.Tests.RepositoryTests
 {
     public class MenuItemRepositoryTests : IDisposable
     {
@@ -128,7 +129,7 @@ namespace menu_api.Tests
             await _repository.InsertMenuItem(menuItem);
 
             //assert
-            await Assert.ThrowsAsync<ItemAlreadyExsists>(async () => await _repository.InsertMenuItem(menuItem));
+            await Assert.ThrowsAsync<ItemAlreadyExsistsExeption>(async () => await _repository.InsertMenuItem(menuItem));
         }
 
         [Fact]

@@ -1,4 +1,5 @@
 ﻿using menu_api.Context;
+using menu_api.Exeptions;
 using menu_api.Models;
 
 namespace menu_api.Repositories
@@ -15,8 +16,19 @@ namespace menu_api.Repositories
         //Add ingredient to menuItem
         public async Task AddIngredient(MenuItem_Ingredient menuItem_Ingredient)
         {
-            await context.MenuItem_Ingredients.AddAsync(menuItem_Ingredient);
-            await context.SaveChangesAsync();
+            var ingredient = await context.Ingredients.FindAsync(menuItem_Ingredient.IngredientId);
+            if (ingredient == null) { throw new ItemDoesNotExistExeption("Ingredient"); }
+
+            try
+            {
+                await context.MenuItem_Ingredients.AddAsync(menuItem_Ingredient);
+                await context.SaveChangesAsync();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+            {
+                throw new ItemDoesNotExistExeption("MenuItem");
+            }
+            
         }
 
         //remove ingredient from menuItem
@@ -28,6 +40,10 @@ namespace menu_api.Repositories
             {
                 context.MenuItem_Ingredients.Remove(menuItem_Ingredient);
                 await context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ItemDoesNotExistExeption();
             }
         }
 

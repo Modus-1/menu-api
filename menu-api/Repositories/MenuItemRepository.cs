@@ -1,6 +1,7 @@
 ﻿using menu_api.Context;
 using menu_api.Models;
 using Microsoft.EntityFrameworkCore;
+using menu_api.Exeptions;
 
 namespace menu_api.Repositories
 {
@@ -36,7 +37,11 @@ namespace menu_api.Repositories
             }
             catch (System.ArgumentException)
             {
-                throw new ItemAlreadyExsists();
+                throw new ItemAlreadyExsistsExeption();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+            {
+                throw new ItemAlreadyExsistsExeption();
             }
             
         }
@@ -49,12 +54,23 @@ namespace menu_api.Repositories
                 context.MenuItems.Remove(menuItem);
                 await context.SaveChangesAsync();
             }
+            else
+            {
+                throw new ItemDoesNotExistExeption();
+            }
         }
 
         public async Task UpdateMenuItem(MenuItem menuItem)
         {
-            context.MenuItems.Update(menuItem);
-            await context.SaveChangesAsync();
+            try
+            {
+                context.MenuItems.Update(menuItem);
+                await context.SaveChangesAsync();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
+            {
+                throw new ItemDoesNotExistExeption();
+            }
         }
     }
 }

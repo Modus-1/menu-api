@@ -8,5 +8,9 @@ namespace menu_api.Exeptions
         public ItemDoesNotExistExeption()
         {
         }
+
+        public ItemDoesNotExistExeption(string? message) : base(message)
+        {
+        }
     }
 }

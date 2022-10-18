@@ -1,6 +1,7 @@
 ﻿using menu_api.Context;
 using menu_api.Models;
 using Microsoft.EntityFrameworkCore;
+using menu_api.Exeptions;
 
 namespace menu_api.Repositories
 {
@@ -29,22 +30,31 @@ namespace menu_api.Repositories
 
         public async Task InsertMenuItem(MenuItem menuItem)
         {
+            if (await GetMenuItemByID(menuItem.Id) != null)
+            { throw new ItemAlreadyExsistsException(); }
+
             await context.MenuItems.AddAsync(menuItem);
             await context.SaveChangesAsync();
+
         }
 
         public async Task DeleteMenuItem(Guid menuItemId)
         {
             MenuItem? menuItem = await context.MenuItems.FindAsync(menuItemId);
-            if (menuItem != null)
-            {
-                context.MenuItems.Remove(menuItem);
-                await context.SaveChangesAsync();
-            }
+
+            if (menuItem == null)
+            { throw new ItemDoesNotExistException();}
+
+            context.MenuItems.Remove(menuItem);
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateMenuItem(MenuItem menuItem)
         {
+            if (await GetMenuItemByID(menuItem.Id) == null)
+            { throw new ItemDoesNotExistException(); }
+
+            context.ChangeTracker.Clear();
             context.MenuItems.Update(menuItem);
             await context.SaveChangesAsync();
         }

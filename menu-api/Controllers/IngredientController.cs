@@ -2,6 +2,7 @@
 using menu_api.Models;
 using menu_api.Repositories;
 using menu_api.Context;
+using menu_api.Exeptions;
 
 namespace menu_api.Controllers
 {
@@ -9,51 +10,70 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class IngredientController : ControllerBase
     {
-        private readonly IIngredientRepository ingredientRepository;
+        private readonly IIngredientRepository _ingredientRepository;
 
-        public IngredientController(MenuContext context)
+        public IngredientController(IIngredientRepository IngredientRepo)
         {
-            ingredientRepository = new IngredientRepository(context);
+            _ingredientRepository = IngredientRepo;
         }
 
         [HttpGet]
         public async Task<IEnumerable<Ingredient>> GetAllIngredients()
         {
-            var ingredients = await ingredientRepository.GetAllIngredients();
-            if (ingredients == null)
-            {
-                return Enumerable.Empty<Ingredient>();
-            }
-            return ingredients;
+            return await _ingredientRepository.GetAllIngredients();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ingredient>> GetIngredientById(Guid id)
+        public async Task<ActionResult<Ingredient>> GetIngredientByID(Guid id)
         {
-            var ingredient = await ingredientRepository.GetIngredientByID(id);
+            var ingredient = await _ingredientRepository.GetIngredientByID(id);
             if (ingredient == null)
             {
-                return NotFound();
+                return NotFound("Ingredient not found");
             }
             return ingredient;
         }
 
         [HttpPost]
-        public async Task InsertIngredient(Ingredient ingredient)
+        public async Task<ActionResult> InsertIngredient(Ingredient ingredient)
         {
-            await ingredientRepository.InsertIngredient(ingredient);
+            try
+            {
+                await _ingredientRepository.InsertIngredient(ingredient);
+                return Ok();
+            }
+            catch (ItemAlreadyExsistsException)
+            {
+                return Conflict("Ingredient already exists");
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteIngredient(Guid id)
+        public async Task<ActionResult> DeleteIngredient(Guid id)
         {
-            await ingredientRepository.DeleteIngredient(id);
+            try
+            {
+                await _ingredientRepository.DeleteIngredient(id);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException)
+            {
+                return NotFound("Ingredient not found");
+            }
         }
 
         [HttpPatch]
-        public async Task UpdateIngredient(Ingredient ingredient)
+        public async Task<ActionResult> UpdateIngredient(Ingredient ingredient)
         {
-            await ingredientRepository.UpdateIngredient(ingredient);
+            try
+            {
+                await _ingredientRepository.UpdateIngredient(ingredient);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException)
+            {
+                return NotFound("Ingredient not found");
+            }
         }
     }
 }

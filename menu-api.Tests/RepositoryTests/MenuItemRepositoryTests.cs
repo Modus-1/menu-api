@@ -34,15 +34,15 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetMenuItems_WithPopulatedTable_ShouldReturnAllMenuItems()
         {
-            //arrange
+            //Arrange
             await _repository.InsertMenuItem(new MenuItem());
             await _repository.InsertMenuItem(new MenuItem());
             await _repository.InsertMenuItem(new MenuItem());
 
-            //act
+            //Act
             var results = await _repository.GetMenuItems();
 
-            //assert
+            //Assert
             results
                 .Should()
                 .NotBeNull()
@@ -53,14 +53,14 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetMenuItemById_WithPopulatedTable_ShouldReturnOneMenuItem()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
             await _repository.InsertMenuItem(new MenuItem { Id = id });
 
-            //act
+            //Act
             var result = await _repository.GetMenuItemByID(id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .NotBeNull()
@@ -70,13 +70,13 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetMenuItemById_WithoutPopulatedTable_ShouldReturnNull()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
 
-            //act
+            //Act
             var result = await _repository.GetMenuItemByID(id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .BeNull();
@@ -85,7 +85,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task InsertMenuItem_ShouldPopulateTable_WithTheMenuItem()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -98,11 +98,11 @@ namespace menu_api.Tests.RepositoryTests
                 CategoryId = 3
             };
 
-            //act
+            //Act
             await _repository.InsertMenuItem(menuItem);
             var result = await _repository.GetMenuItemByID(menuItem.Id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .NotBeNull()
@@ -112,7 +112,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task InsertMenuItem_ThatAlreadyExistsInTable_ShouldThrowCorrectException()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -125,17 +125,17 @@ namespace menu_api.Tests.RepositoryTests
                 CategoryId = 3
             };
 
-            //act
+            //Act
             await _repository.InsertMenuItem(menuItem);
 
-            //assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsExeption>(async () => await _repository.InsertMenuItem(menuItem));
+            //Assert
+            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.InsertMenuItem(menuItem));
         }
 
         [Fact]
         public async Task DeleteMenuItem_ShouldDelete_PopulatedTable()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -163,13 +163,13 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.InsertMenuItem(menuItem);
             await _repository.InsertMenuItem(menuItem2);
 
-            //act
+            //Act
             await _repository.DeleteMenuItem(menuItem.Id);
 
             var newMenuItem = await _repository.GetMenuItemByID(menuItem.Id); //Should return null because it was previously deleted
             var newMenuItem2 = await _repository.GetMenuItemByID(menuItem2.Id); //Should return menuItem2 because it was not deleted
 
-            //assert
+            //Assert
             Assert.Null(newMenuItem);
             Assert.NotNull(newMenuItem2);
         }
@@ -178,7 +178,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task DeleteMenuItem_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -191,17 +191,17 @@ namespace menu_api.Tests.RepositoryTests
                 CategoryId = 3
             };
 
-            //act
+            //Act
             var function = async () => await _repository.DeleteMenuItem(menuItem.Id);
 
-            //assert
-            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
 
         [Fact]
         public async Task UpdateMenuItem_ShouldUpdatePopulatedTable()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -228,7 +228,7 @@ namespace menu_api.Tests.RepositoryTests
 
             await _repository.InsertMenuItem(menuItem);
 
-            //act
+            //Act
             menuItem.Name = "boterham met kaas";
             menuItem.IconUrl = "https://kanikeenkortebroekaan.nl/";
             menuItem.BannerUrl = "https://kanikeenkortebroekaan.nl/";
@@ -241,7 +241,7 @@ namespace menu_api.Tests.RepositoryTests
             var updatedMenuItem = await _repository.GetMenuItemByID(menuItem.Id);
 
 
-            //asserts
+            //Asserts
             updatedMenuItem.Should()
                 .NotBeNull()
                 .And.NotBeEquivalentTo(oldMenuItemCopy)
@@ -251,7 +251,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task UpdateMenuItem_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
+            //Arrange
             var menuItem = new MenuItem
             {
                 Id = Guid.NewGuid(),
@@ -264,11 +264,11 @@ namespace menu_api.Tests.RepositoryTests
                 CategoryId = 3
             };
 
-            //act
+            //Act
             var function = async () => await _repository.UpdateMenuItem(menuItem);
 
-            //assert
-            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
 
     }

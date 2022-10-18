@@ -10,23 +10,23 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class IngredientController : ControllerBase
     {
-        private readonly IIngredientRepository ingredientRepository;
+        private readonly IIngredientRepository _ingredientRepository;
 
         public IngredientController(IIngredientRepository IngredientRepo)
         {
-            ingredientRepository = IngredientRepo;
+            _ingredientRepository = IngredientRepo;
         }
 
         [HttpGet]
         public async Task<IEnumerable<Ingredient>> GetAllIngredients()
         {
-            return await ingredientRepository.GetAllIngredients();
+            return await _ingredientRepository.GetAllIngredients();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Ingredient>> GetIngredientByID(Guid id)
         {
-            var ingredient = await ingredientRepository.GetIngredientByID(id);
+            var ingredient = await _ingredientRepository.GetIngredientByID(id);
             if (ingredient == null)
             {
                 return NotFound("Ingredient not found");
@@ -39,10 +39,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await ingredientRepository.InsertIngredient(ingredient);
+                await _ingredientRepository.InsertIngredient(ingredient);
                 return Ok();
             }
-            catch (ItemAlreadyExsistsExeption)
+            catch (ItemAlreadyExsistsException)
             {
                 return Conflict("Ingredient already exists");
             }
@@ -53,10 +53,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await ingredientRepository.DeleteIngredient(id);
+                await _ingredientRepository.DeleteIngredient(id);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption)
+            catch (ItemDoesNotExistException)
             {
                 return NotFound("Ingredient not found");
             }
@@ -67,10 +67,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await ingredientRepository.UpdateIngredient(ingredient);
+                await _ingredientRepository.UpdateIngredient(ingredient);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption)
+            catch (ItemDoesNotExistException)
             {
                 return NotFound("Ingredient not found");
             }

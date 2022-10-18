@@ -12,7 +12,7 @@ namespace menu_api.Tests.RepositoryTests
 {
     public class MenuItem_IngredientRepositoryTests : IDisposable
     {
-        private readonly MenuItem_IngredientRepository _repository;
+        private readonly MenuItemIngredientRepository _repository;
         private readonly MenuContext _context;
 
         public MenuItem_IngredientRepositoryTests()
@@ -22,7 +22,7 @@ namespace menu_api.Tests.RepositoryTests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _context = new MenuContext(options);
-            _repository = new MenuItem_IngredientRepository(_context);
+            _repository = new MenuItemIngredientRepository(_context);
         }
 
         public void Dispose()
@@ -35,8 +35,8 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task AddIngredientToMenuItem_ShouldPopulateMenuItem_IngredientTable_WithTheIngredient()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -44,11 +44,11 @@ namespace menu_api.Tests.RepositoryTests
             };
             _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
             _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
-            //act
+            //Act
             await _repository.AddIngredient(menuItem_Ingredient);
             var result = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .NotBeNull()
@@ -59,8 +59,8 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task AddIngredientToMenuItem_ThatAlreadyExistsInTable_ShouldThrowCorrectException()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -70,18 +70,18 @@ namespace menu_api.Tests.RepositoryTests
             _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
             _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
 
-            //act
+            //Act
             await _repository.AddIngredient(menuItem_Ingredient);
 
-            //assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsExeption>(async () => await _repository.AddIngredient(menuItem_Ingredient));
+            //Assert
+            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.AddIngredient(menuItem_Ingredient));
         }
 
         [Fact]
         public async Task AddIngredientToMenuItem_WithNonExistingMenuItem_ShouldThrowCorrectException()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -90,19 +90,19 @@ namespace menu_api.Tests.RepositoryTests
 
             _context.Ingredients.Add(new Ingredient() { Id = menuItem_Ingredient.IngredientId });
 
-            //act
+            //Act
             var function = async () => await _repository.AddIngredient(menuItem_Ingredient);
 
-            //assert
-            ItemDoesNotExistExeption ex = await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            ItemDoesNotExistException ex = await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
             Assert.Matches("MenuItem", ex.Message);
         }
 
         [Fact]
         public async Task AddIngredientToMenuItem_WithNonExistingIngredent_ShouldThrowCorrectException()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -111,25 +111,25 @@ namespace menu_api.Tests.RepositoryTests
 
             _context.MenuItems.Add(new MenuItem() { Id = menuItem_Ingredient.MenuItemId });
 
-            //act
+            //Act
             var function = async () => await _repository.AddIngredient(menuItem_Ingredient);
 
-            //assert
-            ItemDoesNotExistExeption ex = await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            ItemDoesNotExistException ex = await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
             Assert.Matches("Ingredient", ex.Message);
         }
 
         [Fact]
         public async Task RemoveIngredientFromMenuItem_Ingredient_ShouldRemoveIngredient()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
                 Amount = 10
             };
-            var menuItem_Ingredient2 = new MenuItem_Ingredient
+            var menuItem_Ingredient2 = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -144,14 +144,14 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.AddIngredient(menuItem_Ingredient);
             await _repository.AddIngredient(menuItem_Ingredient2);
 
-            //act
+            //Act
 
             await _repository.RemoveIngredient(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
 
             var result = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
             var result2 = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient2.MenuItemId, menuItem_Ingredient2.IngredientId);
 
-            //assert
+            //Assert
             Assert.Null(result);
             Assert.NotNull(result2);
             result2.Should().BeEquivalentTo(menuItem_Ingredient2);
@@ -160,8 +160,8 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task RemoveIngredientFromMenuItem_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -169,32 +169,32 @@ namespace menu_api.Tests.RepositoryTests
             };
 
 
-            //act
+            //Act
             var function = async () => await _repository.RemoveIngredient(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
 
-            //assert
-            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
 
         [Fact]
         public async Task RemoveAllIngredientsFromMenuItem()
         {
-            //arrange
+            //Arrange
             var menuItemId = Guid.NewGuid();
 
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = menuItemId,
                 IngredientId = Guid.NewGuid(),
                 Amount = 10
             };
-            var menuItem_Ingredient2 = new MenuItem_Ingredient
+            var menuItem_Ingredient2 = new MenuItemIngredient
             {
                 MenuItemId = menuItemId,
                 IngredientId = Guid.NewGuid(),
                 Amount = 12
             };
-            var menuItem_Ingredient3 = new MenuItem_Ingredient
+            var menuItem_Ingredient3 = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -213,7 +213,7 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.AddIngredient(menuItem_Ingredient2);
             await _repository.AddIngredient(menuItem_Ingredient3);
 
-            //act
+            //Act
 
             await _repository.RemoveAllIngredients(menuItemId);
 
@@ -221,7 +221,7 @@ namespace menu_api.Tests.RepositoryTests
             var result2 = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient2.MenuItemId, menuItem_Ingredient2.IngredientId);
             var result3 = await _context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient3.MenuItemId, menuItem_Ingredient3.IngredientId);
 
-            //assert
+            //Assert
             Assert.Null(result);
             Assert.Null(result2);
             Assert.NotNull(result3);
@@ -234,8 +234,8 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task RemoveAllIngredientsFromMenuItem_FromMenuItemThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
-            var menuItem_Ingredient = new MenuItem_Ingredient
+            //Arrange
+            var menuItem_Ingredient = new MenuItemIngredient
             {
                 MenuItemId = Guid.NewGuid(),
                 IngredientId = Guid.NewGuid(),
@@ -243,11 +243,11 @@ namespace menu_api.Tests.RepositoryTests
             };
 
 
-            //act
+            //Act
             var function = async () => await _repository.RemoveAllIngredients(menuItem_Ingredient.MenuItemId);
 
-            //assert
-            ItemDoesNotExistExeption ex = await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            ItemDoesNotExistException ex = await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
             Assert.Matches("MenuItem", ex.Message);
         }
 

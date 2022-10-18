@@ -30,6 +30,6 @@
 
         public int CategoryId { get; set; }
 
-        public List<MenuItem_Ingredient>? Ingredients { get; set; } = new List<MenuItem_Ingredient>();
+        public List<MenuItemIngredient>? Ingredients { get; set; } = new List<MenuItemIngredient>();
     }
 }

@@ -34,15 +34,15 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetIngredients_WithPopulatedTable_ShouldReturnAllIngredients()
         {
-            //arrange
+            //Arrange
             await _repository.InsertIngredient(new Ingredient());
             await _repository.InsertIngredient(new Ingredient());
             await _repository.InsertIngredient(new Ingredient());
 
-            //act
+            //Act
             var results = await _repository.GetAllIngredients();
 
-            //assert
+            //Assert
             results
                 .Should()
                 .NotBeNull()
@@ -54,14 +54,14 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetIngredientByID_WithPopulatedTable_ShouldReturnOneIngredient()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
             await _repository.InsertIngredient(new Ingredient { Id = id });
 
-            //act
+            //Act
             var result = await _repository.GetIngredientByID(id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .NotBeNull()
@@ -71,13 +71,13 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task GetIngredientByID_WithoutPopulatedTable_ShouldReturnNull()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
 
-            //act
+            //Act
             var result = await _repository.GetIngredientByID(id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .BeNull();
@@ -86,7 +86,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task InsertIngredient_ShouldPopulateTable_WithTheIngredient()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -95,11 +95,11 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = "melkies ofz"
             };
 
-            //act
+            //Act
             await _repository.InsertIngredient(ingredient);
             var result = await _repository.GetIngredientByID(ingredient.Id);
 
-            //assert
+            //Assert
             result
                 .Should()
                 .NotBeNull()
@@ -110,7 +110,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task InsertIngredient_ThatAlreadyExistsInTable_ShouldThrowItemAlreadyExistsException()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -119,17 +119,17 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = "melkies ofz"
             };
 
-            //act
+            //Act
             await _repository.InsertIngredient(ingredient);
 
-            //assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsExeption>(async () => await _repository.InsertIngredient(ingredient));
+            //Assert
+            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.InsertIngredient(ingredient));
         }
 
         [Fact]
         public async Task DeleteIngredient_ShouldDelete_PopulatedTable()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -149,13 +149,13 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.InsertIngredient(ingredient);
             await _repository.InsertIngredient(ingredient2);
 
-            //act
+            //Act
             await _repository.DeleteIngredient(ingredient.Id);
 
             var newIngredient = await _repository.GetIngredientByID(ingredient.Id); //Should return null because it was previously deleted
             var newIngredient2 = await _repository.GetIngredientByID(ingredient2.Id); //Should return newIngredient2 because it was not deleted
 
-            //assert
+            //Assert
             Assert.Null(newIngredient);
             Assert.NotNull(newIngredient2);
         }
@@ -163,7 +163,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task DeleteIngredient_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -172,11 +172,11 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = "melkies ofz"
             };
 
-            //act
+            //Act
             var function = async () => await _repository.DeleteIngredient(ingredient.Id);
 
-            //assert
-            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
 
 
@@ -184,7 +184,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task UpdateIngredient_ShouldUpdatePopulatedTable()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -204,7 +204,7 @@ namespace menu_api.Tests.RepositoryTests
 
             await _repository.InsertIngredient(ingredient);
 
-            //act
+            //Act
             ingredient.Name = "boterham met kaas";
             ingredient.Stock = 8;
             ingredient.Allergens = "niks ofz";
@@ -213,7 +213,7 @@ namespace menu_api.Tests.RepositoryTests
             var updatedMenuItem = await _repository.GetIngredientByID(ingredient.Id);
 
 
-            //asserts
+            //Asserts
             updatedMenuItem.Should()
                 .NotBeNull()
                 .And.NotBeEquivalentTo(OldIngredientCopy)
@@ -223,7 +223,7 @@ namespace menu_api.Tests.RepositoryTests
         [Fact]
         public async Task UpdateIngredient_ThatDoesNotExist_ShouldThrowItemDoesNotExistExeption()
         {
-            //arrange
+            //Arrange
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid(),
@@ -232,11 +232,11 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = "melkies ofz"
             };
 
-            //act
+            //Act
             var function = async () => await _repository.UpdateIngredient(ingredient);
 
-            //assert
-            await Assert.ThrowsAsync<ItemDoesNotExistExeption>(function);
+            //Assert
+            await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace menu_api.Repositories
 {
-    public interface IMenuItem_IngredientRepository
+    public interface IMenuItemIngredientRepository
     {
-        Task AddIngredient(MenuItem_Ingredient menuItem_Ingredient);
+        Task AddIngredient(MenuItemIngredient menuItem_Ingredient);
         Task RemoveIngredient(Guid menuItemId, Guid ingredientId);
         Task RemoveAllIngredients(Guid menuItemId);
     }

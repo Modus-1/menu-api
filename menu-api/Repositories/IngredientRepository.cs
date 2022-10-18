@@ -26,47 +26,33 @@ namespace menu_api.Repositories
 
         public async Task InsertIngredient(Ingredient ingredient)
         {
-            if (await GetIngredientByID(ingredient.Id) == null)
-            {
-                await context.Ingredients.AddAsync(ingredient);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new ItemAlreadyExsistsExeption();
-            }
+            var _ingredient = await GetIngredientByID(ingredient.Id);
+
+            if (_ingredient != null)
+            { throw new ItemAlreadyExsistsException(); }
+
+            await context.Ingredients.AddAsync(ingredient);
+            await context.SaveChangesAsync();
         }
         public async Task DeleteIngredient(Guid ingriedientId)
         {
             Ingredient? ingredient = await context.Ingredients.FindAsync(ingriedientId);
-            if (ingredient != null)
-            {
-                context.Ingredients.Remove(ingredient);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new ItemDoesNotExistExeption();
-            }
+
+            if (ingredient == null) { throw new ItemDoesNotExistException(); }
+
+            context.Ingredients.Remove(ingredient);
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateIngredient(Ingredient ingredient)
         {
-
-            
-
             var _ingredient = await context.Ingredients.SingleOrDefaultAsync(i => i.Id == ingredient.Id);
 
-            if (_ingredient != null)
-            {
-                context.ChangeTracker.Clear();
-                context.Update(ingredient);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new ItemDoesNotExistExeption();
-            }
+            if (_ingredient == null) { throw new ItemDoesNotExistException(); }
+
+            context.ChangeTracker.Clear();
+            context.Update(ingredient);
+            await context.SaveChangesAsync();
         }
     }
 }

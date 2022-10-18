@@ -7,13 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<MenuContext>(
     options => options.UseSqlServer(
-        builder.Configuration["ConnectionStrings:MenuConnStr"]
+        builder.Configuration["ConnectionStrings:LocalMenuConnStr"]
         )
     );
 
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
-builder.Services.AddScoped<IMenuItem_IngredientRepository, MenuItem_IngredientRepository>();
+builder.Services.AddScoped<IMenuItemIngredientRepository, MenuItemIngredientRepository>();
 
 
 builder.Services.AddControllers();

@@ -16,27 +16,27 @@ namespace menu_api.Tests.ControllerTests
 {
     public class IngredientControllerTests
     {
-        private readonly Mock<IIngredientRepository> _IngredientRepo;
+        private readonly Mock<IIngredientRepository> _ingredientRepo;
         private readonly IngredientController _controller;
 
         public IngredientControllerTests()
         {
-            _IngredientRepo = new Mock<IIngredientRepository>();
-            _controller = new IngredientController(_IngredientRepo.Object);
+            _ingredientRepo = new Mock<IIngredientRepository>();
+            _controller = new IngredientController(_ingredientRepo.Object);
         }
 
         [Fact]
         public async Task GetAllIngredients_ReturnsIngredientList()
         {
-            //arrange
+            //Arrange
             IEnumerable<Ingredient> Ingredients = new List<Ingredient>() { new Ingredient(), new Ingredient(), new Ingredient(), new Ingredient() };
 
-            _IngredientRepo.Setup(x => x.GetAllIngredients()).ReturnsAsync(Ingredients);
+            _ingredientRepo.Setup(x => x.GetAllIngredients()).ReturnsAsync(Ingredients);
 
-            //act
+            //Act
             var result = await _controller.GetAllIngredients();
 
-            //assert
+            //Assert
             result.Should()
                 .NotBeNull()
                 .And.BeOfType<List<Ingredient>>();
@@ -47,20 +47,20 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task GetIngredientByID_ReturnsCorrectIngredient()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
             Guid id2 = Guid.NewGuid();
             Ingredient item = new Ingredient() { Id = id };
             Ingredient item2 = new Ingredient() { Id = id2 };
 
 
-            _IngredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
-            _IngredientRepo.Setup(x => x.GetIngredientByID(id2)).ReturnsAsync(item2);
+            _ingredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
+            _ingredientRepo.Setup(x => x.GetIngredientByID(id2)).ReturnsAsync(item2);
 
-            //act
+            //Act
             ActionResult<Ingredient> result = await _controller.GetIngredientByID(id);
 
-            //assert
+            //Assert
             result.Value.Should()
                 .NotBeNull()
                 .And.BeEquivalentTo(item)
@@ -70,18 +70,18 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task GetIngredientByID_ShouldReturnNull_IfTableIsEmpty()
         {
-            //arrange
+            //Arrange
             Guid id = Guid.NewGuid();
             Ingredient? item = null;
-            _IngredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
+            _ingredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
 
-            //act
+            //Act
             ActionResult<Ingredient> result = await _controller.GetIngredientByID(id);
 
             var NotFoundResult = result.Result as NotFoundObjectResult;
             var OKResult = result.Result as OkResult;
 
-            //assert
+            //Assert
             NotFoundResult.Should().NotBeNull();
             OKResult.Should().BeNull();
         }
@@ -89,17 +89,17 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task InsertIngredient_ShouldReturnOK_WhenSuccessful()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
 
 
-            //act
+            //Act
             ActionResult result = await _controller.InsertIngredient(item);
 
             var OKResult = result as OkResult;
             var ConflictResult = result as ConflictObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().NotBeNull();
             ConflictResult.Should().BeNull();
         }
@@ -107,18 +107,18 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task InsertIngredient_ShouldReturnConflict_WhenFailed()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
-            _IngredientRepo.Setup(x => x.InsertIngredient(item)).ThrowsAsync(new ItemAlreadyExsistsExeption());
+            _ingredientRepo.Setup(x => x.InsertIngredient(item)).ThrowsAsync(new ItemAlreadyExsistsException());
 
 
-            //act
+            //Act
             ActionResult result = await _controller.InsertIngredient(item);
 
             var OKResult = result as OkResult;
             var ConflictResult = result as ConflictObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().BeNull();
             ConflictResult.Should().NotBeNull();
         }
@@ -127,17 +127,17 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task DeleteIngredient_ShouldReturnOK_WhenSuccessful()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
 
 
-            //act
+            //Act
             ActionResult result = await _controller.DeleteIngredient(item.Id);
 
             var OKResult = result as OkResult;
             var NotFoundResult = result as NotFoundObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().NotBeNull();
             NotFoundResult.Should().BeNull();
         }
@@ -145,17 +145,17 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task DeleteIngredient_ShouldReturnNotFound_WhenFailed()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
-            _IngredientRepo.Setup(x => x.DeleteIngredient(item.Id)).ThrowsAsync(new ItemDoesNotExistExeption());
+            _ingredientRepo.Setup(x => x.DeleteIngredient(item.Id)).ThrowsAsync(new ItemDoesNotExistException());
 
-            //act
+            //Act
             ActionResult result = await _controller.DeleteIngredient(item.Id);
 
             var OKResult = result as OkResult;
             var NotFoundResult = result as NotFoundObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().BeNull();
             NotFoundResult.Should().NotBeNull();
         }
@@ -164,17 +164,17 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task UpdateIngredient_ShouldReturnOK_WhenSuccessful()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
 
 
-            //act
+            //Act
             ActionResult result = await _controller.UpdateIngredient(item);
 
             var OKResult = result as OkResult;
             var NotFoundResult = result as NotFoundObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().NotBeNull();
             NotFoundResult.Should().BeNull();
         }
@@ -182,17 +182,17 @@ namespace menu_api.Tests.ControllerTests
         [Fact]
         public async Task UpdateIngredient_ShouldReturnNotFound_WhenFailed()
         {
-            //arrange
+            //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
-            _IngredientRepo.Setup(x => x.UpdateIngredient(item)).ThrowsAsync(new ItemDoesNotExistExeption());
+            _ingredientRepo.Setup(x => x.UpdateIngredient(item)).ThrowsAsync(new ItemDoesNotExistException());
 
-            //act
+            //Act
             ActionResult result = await _controller.UpdateIngredient(item);
 
             var OKResult = result as OkResult;
             var NotFoundResult = result as NotFoundObjectResult;
 
-            //assert
+            //Assert
             OKResult.Should().BeNull();
             NotFoundResult.Should().NotBeNull();
         }

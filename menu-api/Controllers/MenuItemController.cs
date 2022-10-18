@@ -10,25 +10,25 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class MenuItemController : ControllerBase
     {
-        private readonly IMenuItemRepository menuItemRepository;
-        private readonly IMenuItem_IngredientRepository menuItemIngredientRepository;
+        private readonly IMenuItemRepository _menuItemRepository;
+        private readonly IMenuItemIngredientRepository _menuItemIngredientRepository;
 
-        public MenuItemController(IMenuItemRepository MenuItemRepo, IMenuItem_IngredientRepository MenuItem_IngredientRepo )
+        public MenuItemController(IMenuItemRepository MenuItemRepo, IMenuItemIngredientRepository MenuItem_IngredientRepo )
         {
-            menuItemRepository = MenuItemRepo;
-            menuItemIngredientRepository = MenuItem_IngredientRepo;
+            _menuItemRepository = MenuItemRepo;
+            _menuItemIngredientRepository = MenuItem_IngredientRepo;
         }
 
         [HttpGet]
         public async Task<IEnumerable<MenuItem>> GetMenuItems()
         {
-            return await menuItemRepository.GetMenuItems();
+            return await _menuItemRepository.GetMenuItems();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItem>> GetMenuItemByID(Guid id)
         {
-            var menuItem = await menuItemRepository.GetMenuItemByID(id);
+            var menuItem = await _menuItemRepository.GetMenuItemByID(id);
             if (menuItem == null)
             {
                 return NotFound("MenuItem Not found");
@@ -41,10 +41,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await menuItemRepository.InsertMenuItem(menuItem);
+                await _menuItemRepository.InsertMenuItem(menuItem);
                 return Ok();
             }
-            catch (ItemAlreadyExsistsExeption)
+            catch (ItemAlreadyExsistsException)
             {
                 return Conflict("MenuItem already exists");
             }
@@ -55,11 +55,11 @@ namespace menu_api.Controllers
         {
             try
             {
-                await menuItemIngredientRepository.RemoveAllIngredients(id);
-                await menuItemRepository.DeleteMenuItem(id);
+                await _menuItemIngredientRepository.RemoveAllIngredients(id);
+                await _menuItemRepository.DeleteMenuItem(id);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption)
+            catch (ItemDoesNotExistException)
             {
                 return NotFound("MenuItem Not found");
             }
@@ -67,14 +67,14 @@ namespace menu_api.Controllers
         }
 
         [HttpPost("ingredient")]
-        public async Task<ActionResult> AddIngredientToMenuItem(MenuItem_Ingredient menuItem_Ingredient)
+        public async Task<ActionResult> AddIngredientToMenuItem(MenuItemIngredient menuItem_Ingredient)
         {
             try
             {
-                await menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
+                await _menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption ex)
+            catch (ItemDoesNotExistException ex)
             {
                 return NotFound(ex.Message + " Not found");
             }
@@ -85,10 +85,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await menuItemRepository.UpdateMenuItem(menuItem);
+                await _menuItemRepository.UpdateMenuItem(menuItem);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption)
+            catch (ItemDoesNotExistException)
             {
                 return NotFound("MenuItem Not found");
             }
@@ -99,10 +99,10 @@ namespace menu_api.Controllers
         {
             try
             {
-                await menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
+                await _menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
                 return Ok();
             }
-            catch (ItemDoesNotExistExeption)
+            catch (ItemDoesNotExistException)
             {
                 return NotFound("MenuItem_Ingredient Not found");
             }

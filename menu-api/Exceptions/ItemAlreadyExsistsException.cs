@@ -3,9 +3,9 @@
 namespace menu_api.Exeptions
 {
     [Serializable]
-    public class ItemAlreadyExsistsExeption : Exception
+    public class ItemAlreadyExsistsException : Exception
     {
-        public ItemAlreadyExsistsExeption()
+        public ItemAlreadyExsistsException()
         {
         }
 

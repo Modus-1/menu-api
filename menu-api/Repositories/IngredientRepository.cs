@@ -38,7 +38,8 @@ namespace menu_api.Repositories
         {
             Ingredient? ingredient = await context.Ingredients.FindAsync(ingriedientId);
 
-            if (ingredient == null) { throw new ItemDoesNotExistException(); }
+            if (ingredient == null) 
+            { throw new ItemDoesNotExistException(); }
 
             context.Ingredients.Remove(ingredient);
             await context.SaveChangesAsync();
@@ -48,7 +49,8 @@ namespace menu_api.Repositories
         {
             var _ingredient = await context.Ingredients.SingleOrDefaultAsync(i => i.Id == ingredient.Id);
 
-            if (_ingredient == null) { throw new ItemDoesNotExistException(); }
+            if (_ingredient == null) 
+            { throw new ItemDoesNotExistException(); }
 
             context.ChangeTracker.Clear();
             context.Update(ingredient);

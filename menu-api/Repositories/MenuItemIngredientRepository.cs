@@ -24,10 +24,10 @@ namespace menu_api.Repositories
             if (_menuItem_Ingredient != null)
             { throw new ItemAlreadyExsistsException(); }
 
-            else if (menuItem == null)
+            if (menuItem == null)
             { throw new ItemDoesNotExistException("MenuItem"); }
 
-            else if (ingredient == null)
+            if (ingredient == null)
             { throw new ItemDoesNotExistException("Ingredient"); }
 
             await context.MenuItem_Ingredients.AddAsync(menuItem_Ingredient);
@@ -41,9 +41,7 @@ namespace menu_api.Repositories
                 .FindAsync(menuItemId, ingredientId);
 
             if (menuItem_Ingredient == null)
-            {
-                throw new ItemDoesNotExistException();
-            }
+            { throw new ItemDoesNotExistException(); }
 
             context.MenuItem_Ingredients.Remove(menuItem_Ingredient);
             await context.SaveChangesAsync();

@@ -34,4 +34,5 @@ TestResults/
 # Visual Studio
 .vs/
 
+# Obsidian
 .obsidian/

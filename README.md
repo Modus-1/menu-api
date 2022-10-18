@@ -2,4 +2,4 @@
 
 # Modus Menu API Service
 
-This microservice is responsible for handling menu for the Modus Assumption� solution.
+This microservice is responsible for handling menu for the Modus Assumption™ solution.

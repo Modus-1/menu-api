@@ -1,5 +1,6 @@
 ﻿using menu_api.Context;
 using menu_api.Models;
+using menu_api.Exeptions;
 using menu_api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,66 +10,102 @@ namespace menu_api.Controllers
     [Route("api/[controller]")]
     public class MenuItemController : ControllerBase
     {
-        private readonly IMenuItemRepository menuItemRepository;
-        private readonly IMenuItem_IngredientRepository menuItemIngredientRepository;
+        private readonly IMenuItemRepository _menuItemRepository;
+        private readonly IMenuItemIngredientRepository _menuItemIngredientRepository;
 
-        public MenuItemController(MenuContext menuContext)
+        public MenuItemController(IMenuItemRepository MenuItemRepo, IMenuItemIngredientRepository MenuItem_IngredientRepo )
         {
-            menuItemRepository = new MenuItemRepository(menuContext);
-            menuItemIngredientRepository = new MenuItem_IngredientRepository(menuContext);
+            _menuItemRepository = MenuItemRepo;
+            _menuItemIngredientRepository = MenuItem_IngredientRepo;
         }
 
         [HttpGet]
         public async Task<IEnumerable<MenuItem>> GetMenuItems()
         {
-            var menuItems = await menuItemRepository.GetMenuItems();
-            if (menuItems == null)
-            {
-                return Enumerable.Empty<MenuItem>();
-            }
-            return menuItems;
+            return await _menuItemRepository.GetMenuItems();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItem>> GetMenuItemByID(Guid id)
         {
-            var menuItem = await menuItemRepository.GetMenuItemByID(id);
+            var menuItem = await _menuItemRepository.GetMenuItemByID(id);
             if (menuItem == null)
             {
-                return NotFound();
+                return NotFound("MenuItem Not found");
             }
             return menuItem;
         }
 
         [HttpPost]
-        public async Task InsertMenuItem(MenuItem menuItem)
+        public async Task<ActionResult> InsertMenuItem(MenuItem menuItem)
         {
-            await menuItemRepository.InsertMenuItem(menuItem);
+            try
+            {
+                await _menuItemRepository.InsertMenuItem(menuItem);
+                return Ok();
+            }
+            catch (ItemAlreadyExsistsException)
+            {
+                return Conflict("MenuItem already exists");
+            }
         }
 
-        [HttpDelete("{id}")]
-        public async Task DeleteMenuItem(Guid id)
+        [HttpDelete("{id}")] 
+        public async Task<ActionResult> DeleteMenuItem(Guid id)
         {
-            await menuItemIngredientRepository.RemoveIngredients(id);
-            await menuItemRepository.DeleteMenuItem(id);
-        }
-
-        [HttpPatch]
-        public async Task UpdateMenuItem(MenuItem menuItem)
-        {
-            await menuItemRepository.UpdateMenuItem(menuItem);
+            try
+            {
+                await _menuItemIngredientRepository.RemoveAllIngredients(id);
+                await _menuItemRepository.DeleteMenuItem(id);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException)
+            {
+                return NotFound("MenuItem Not found");
+            }
+            
         }
 
         [HttpPost("ingredient")]
-        public async Task AddIngredientToMenuItem(MenuItem_Ingredient menuItem_Ingredient)
+        public async Task<ActionResult> AddIngredientToMenuItem(MenuItemIngredient menuItem_Ingredient)
         {
-            await menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
+            try
+            {
+                await _menuItemIngredientRepository.AddIngredient(menuItem_Ingredient);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException ex)
+            {
+                return NotFound(ex.Message + " Not found");
+            }
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult> UpdateMenuItem(MenuItem menuItem)
+        {
+            try
+            {
+                await _menuItemRepository.UpdateMenuItem(menuItem);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException)
+            {
+                return NotFound("MenuItem Not found");
+            }
         }
 
         [HttpDelete("ingredient")]
-        public async Task DeleteIngredientFromMenuItem(Guid id, Guid ingredientId)
+        public async Task<ActionResult> DeleteIngredientFromMenuItem(Guid id, Guid ingredientId)
         {
-            await menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
+            try
+            {
+                await _menuItemIngredientRepository.RemoveIngredient(id, ingredientId);
+                return Ok();
+            }
+            catch (ItemDoesNotExistException)
+            {
+                return NotFound("MenuItem_Ingredient Not found");
+            }
         }
     }
 }

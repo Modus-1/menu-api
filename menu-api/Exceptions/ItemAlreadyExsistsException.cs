@@ -9,5 +9,8 @@ namespace menu_api.Exeptions
         {
         }
 
+        protected ItemAlreadyExsistsException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

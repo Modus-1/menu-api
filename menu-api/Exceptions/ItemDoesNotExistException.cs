@@ -11,6 +11,11 @@ namespace menu_api.Exeptions
 
         public ItemDoesNotExistException(string? message) : base(message)
         {
+
+        }
+
+        protected ItemDoesNotExistException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

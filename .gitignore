@@ -28,5 +28,14 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 
+#migrations
+Migrations/
+
+# Test results
+TestResults/
+
 # Visual Studio
 .vs/
+
+# Obsidian
+.obsidian/

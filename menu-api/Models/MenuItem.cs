@@ -17,6 +17,7 @@
 
         public string BannerUrl { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(300)]
         public string LongDescription { get; set; } = string.Empty;
 
@@ -29,6 +30,6 @@
 
         public int CategoryId { get; set; }
 
-        public IList<MenuItem_Ingredient> MenuItemIngredients { get; set; } = new List<MenuItem_Ingredient>();
+        public List<MenuItemIngredient>? Ingredients { get; set; } = new List<MenuItemIngredient>();
     }
 }

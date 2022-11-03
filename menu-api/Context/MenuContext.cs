@@ -14,6 +14,8 @@
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<MenuItemIngredient> MenuItem_Ingredients { get; set; }
+        
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -35,9 +35,15 @@ namespace menu_api.Tests.RepositoryTests
         public async Task GetMenuItems_WithPopulatedTable_ShouldReturnAllMenuItems()
         {
             //Arrange
-            await _repository.InsertMenuItem(new MenuItem());
-            await _repository.InsertMenuItem(new MenuItem());
-            await _repository.InsertMenuItem(new MenuItem());
+            for (var i = 0; i < 5; i++)
+            {
+                await _repository.InsertMenuItem(new MenuItem
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Test Item {i}.",
+                    Category = new Category()
+                });
+            }
 
             //Act
             var results = await _repository.GetMenuItems();
@@ -47,7 +53,7 @@ namespace menu_api.Tests.RepositoryTests
                 .Should()
                 .NotBeNull()
                 .And.NotBeEmpty()
-                .And.HaveCount(3);
+                .And.HaveCount(5);
         }
 
         [Fact]
@@ -55,7 +61,12 @@ namespace menu_api.Tests.RepositoryTests
         {
             //Arrange
             Guid id = Guid.NewGuid();
-            await _repository.InsertMenuItem(new MenuItem { Id = id });
+            var insertedItem = new MenuItem
+            {
+                Id = id,
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
+            };
+            await _repository.InsertMenuItem(insertedItem);
 
             //Act
             var result = await _repository.GetMenuItemByID(id);
@@ -64,7 +75,7 @@ namespace menu_api.Tests.RepositoryTests
             result
                 .Should()
                 .NotBeNull()
-                .And.BeEquivalentTo(new MenuItem { Id = id });
+                .And.BeEquivalentTo(insertedItem);
         }
 
         [Fact]
@@ -95,7 +106,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             //Act
@@ -122,7 +133,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             //Act
@@ -145,7 +156,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             var menuItem2 = new MenuItem
@@ -157,7 +168,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             await _repository.InsertMenuItem(menuItem);
@@ -188,7 +199,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             //Act
@@ -211,7 +222,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             var oldMenuItemCopy = new MenuItem
@@ -223,7 +234,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = menuItem.LongDescription,
                 ShortDescription = menuItem.ShortDescription,
                 Price = menuItem.Price,
-                CategoryId = menuItem.CategoryId
+                Category = menuItem.Category
             };
 
             await _repository.InsertMenuItem(menuItem);
@@ -235,7 +246,7 @@ namespace menu_api.Tests.RepositoryTests
             menuItem.LongDescription = "extra lang";
             menuItem.ShortDescription = "extra kort";
             menuItem.Price = 12.34;
-            menuItem.CategoryId = 2;
+            menuItem.Category = new Category { Id = menuItem.Category.Id, Name = "hoi"};
 
             await _repository.UpdateMenuItem(menuItem);
             var updatedMenuItem = await _repository.GetMenuItemByID(menuItem.Id);
@@ -261,7 +272,7 @@ namespace menu_api.Tests.RepositoryTests
                 LongDescription = "lang",
                 ShortDescription = "kort",
                 Price = 34.90,
-                CategoryId = 3
+                Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
             //Act

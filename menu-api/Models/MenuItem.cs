@@ -28,7 +28,7 @@
         [Required]
         public double Price { get; set; }
 
-        public int CategoryId { get; set; }
+        [Required] public virtual Category? Category { get; set; }
 
         public List<MenuItemIngredient>? Ingredients { get; set; } = new List<MenuItemIngredient>();
     }

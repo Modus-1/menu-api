@@ -18,6 +18,7 @@ namespace menu_api.Repositories
         {
             return await context.MenuItems
                 .Include(c => c.Ingredients)
+                .Include(item => item.Category)
                 .ToListAsync();
         }
 
@@ -25,6 +26,7 @@ namespace menu_api.Repositories
         {
             return await context.MenuItems
                 .Include(c => c.Ingredients)
+                .Include(item => item.Category)
                 .FirstOrDefaultAsync(m => m.Id == menuItemId);
         }
 

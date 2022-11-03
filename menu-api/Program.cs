@@ -11,6 +11,17 @@ builder.Services.AddDbContext<MenuContext>(
         )
     );
 
+var AllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowSpecificOrigins,
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:3000");
+                      });
+});
+
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IMenuItemIngredientRepository, MenuItemIngredientRepository>();
@@ -32,6 +43,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AllowSpecificOrigins);
 
 app.UseAuthorization();
 

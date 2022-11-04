@@ -29,6 +29,15 @@ namespace menu_api.Repositories
                 .Include(item => item.Category)
                 .FirstOrDefaultAsync(m => m.Id == menuItemId);
         }
+        
+        public async Task<IEnumerable<MenuItem>> GetMenuItemsByCategoryId(Guid categoryId)
+        {
+            return await context.MenuItems
+                .Include(item => item.Ingredients)
+                .Include(item => item.Category)
+                .Where(item => item.Category != null && item.Category.Id == categoryId)
+                .ToListAsync();
+        }
 
         public async Task InsertMenuItem(MenuItem menuItem)
         {
@@ -60,5 +69,7 @@ namespace menu_api.Repositories
             context.MenuItems.Update(menuItem);
             await context.SaveChangesAsync();
         }
+
+        
     }
 }

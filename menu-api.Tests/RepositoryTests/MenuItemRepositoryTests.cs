@@ -4,6 +4,7 @@ using menu_api.Models;
 using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using menu_api.Exeptions;
@@ -60,7 +61,7 @@ namespace menu_api.Tests.RepositoryTests
         public async Task GetMenuItemById_WithPopulatedTable_ShouldReturnOneMenuItem()
         {
             //Arrange
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             var insertedItem = new MenuItem
             {
                 Id = id,
@@ -82,7 +83,7 @@ namespace menu_api.Tests.RepositoryTests
         public async Task GetMenuItemById_WithoutPopulatedTable_ShouldReturnNull()
         {
             //Arrange
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
 
             //Act
             var result = await _repository.GetMenuItemByID(id);
@@ -281,6 +282,5 @@ namespace menu_api.Tests.RepositoryTests
             //Assert
             await Assert.ThrowsAsync<ItemDoesNotExistException>(function);
         }
-
     }
 }

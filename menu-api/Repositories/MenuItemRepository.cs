@@ -32,11 +32,13 @@ namespace menu_api.Repositories
         
         public async Task<IEnumerable<MenuItem>> GetMenuItemsByCategoryId(Guid categoryId)
         {
-            return await context.MenuItems
+            var results = await context.MenuItems
                 .Include(item => item.Ingredients)
                 .Include(item => item.Category)
-                .Where(item => item.Category != null && item.Category.Id == categoryId)
+                .Where(item => item.CategoryId == categoryId)
                 .ToListAsync();
+
+            return results;
         }
 
         public async Task InsertMenuItem(MenuItem menuItem)

@@ -19,7 +19,7 @@ public class CategoryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCategories()
     {
-        var result = await _repository.GetAllCategories();
+        var result = (await _repository.GetAllCategories()).ToList();
         return Ok(result);
     }
 }

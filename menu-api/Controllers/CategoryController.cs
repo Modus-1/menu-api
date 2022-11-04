@@ -17,8 +17,9 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Category>> GetAllCategories()
+    public async Task<IActionResult> GetAllCategories()
     {
-        return await _repository.GetAllCategories();
+        var result = await _repository.GetAllCategories();
+        return Ok(result);
     }
 }

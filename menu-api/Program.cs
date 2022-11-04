@@ -1,5 +1,7 @@
+using menu_api;
 using menu_api.Context;
 using menu_api.Repositories;
+using menu_api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,15 +27,32 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IMenuItemIngredientRepository, MenuItemIngredientRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 
 builder.Services.AddControllers();
+
+builder.Services.AddTransient<DatabaseSeeder>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+// Data Seeding start
 var app = builder.Build();
+SeedData(app);
+void SeedData(IHost application)
+{
+    var scopedFactory = application.Services.GetService<IServiceScopeFactory>();
+    if (scopedFactory is null)
+        return;
+
+    using var scope = scopedFactory.CreateScope();
+    var service = scope.ServiceProvider.GetService<DatabaseSeeder>();
+    service?.SeedCategories();
+}
+// Data Seeding end
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

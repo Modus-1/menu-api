@@ -9,5 +9,6 @@ namespace menu_api.Repositories
         Task<IEnumerable<MenuItem>?> GetMenuItems();
         Task InsertMenuItem(MenuItem menuItem);
         Task UpdateMenuItem(MenuItem menuItem);
+        Task<IEnumerable<MenuItem>> GetMenuItemsByCategoryId(Guid categoryId);
     }
 }

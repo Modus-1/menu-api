@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using menu_api.Exeptions;
-using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.RepositoryTests
 {

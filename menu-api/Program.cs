@@ -50,6 +50,7 @@ void SeedData(IHost application)
     using var scope = scopedFactory.CreateScope();
     var service = scope.ServiceProvider.GetService<DatabaseSeeder>();
     service?.SeedCategories();
+    service?.SeedMenuItems();
 }
 // Data Seeding end
 

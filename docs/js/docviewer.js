@@ -117,6 +117,7 @@
             endpoints = await epReq.json();
             await fetchSupplementalDocs();
         } catch(e) {
+            console.log(e);
             alert(`{e}: Cannot fetch endpoints.`);
             return;
         }

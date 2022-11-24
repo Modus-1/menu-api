@@ -14,7 +14,7 @@ namespace menu_api.Repositories
             this.context = context;
         }
 
-        public async Task<IEnumerable<MenuItem>?> GetMenuItems()
+        public async Task<IEnumerable<MenuItem>> GetMenuItems()
         {
             return await context.MenuItems
                 .Include(c => c.Ingredients)
@@ -22,7 +22,7 @@ namespace menu_api.Repositories
                 .ToListAsync();
         }
 
-        public async Task<MenuItem?> GetMenuItemByID(Guid menuItemId)
+        public async Task<MenuItem?> GetMenuItemById(Guid menuItemId)
         {
             return await context.MenuItems
                 .Include(c => c.Ingredients)
@@ -32,18 +32,16 @@ namespace menu_api.Repositories
         
         public async Task<IEnumerable<MenuItem>> GetMenuItemsByCategoryId(Guid categoryId)
         {
-            var results = await context.MenuItems
+            return await context.MenuItems
                 .Include(item => item.Ingredients)
                 .Include(item => item.Category)
                 .Where(item => item.CategoryId == categoryId)
                 .ToListAsync();
-
-            return results;
         }
 
-        public async Task InsertMenuItem(MenuItem menuItem)
+        public async Task CreateMenuItem(MenuItem menuItem)
         {
-            if (await GetMenuItemByID(menuItem.Id) != null)
+            if (await GetMenuItemById(menuItem.Id) != null)
             { throw new ItemAlreadyExsistsException(); }
 
             await context.MenuItems.AddAsync(menuItem);
@@ -53,7 +51,7 @@ namespace menu_api.Repositories
 
         public async Task DeleteMenuItem(Guid menuItemId)
         {
-            MenuItem? menuItem = await context.MenuItems.FindAsync(menuItemId);
+            var menuItem = await context.MenuItems.FindAsync(menuItemId);
 
             if (menuItem == null)
             { throw new ItemDoesNotExistException();}
@@ -64,7 +62,7 @@ namespace menu_api.Repositories
 
         public async Task UpdateMenuItem(MenuItem menuItem)
         {
-            if (await GetMenuItemByID(menuItem.Id) == null)
+            if (await GetMenuItemById(menuItem.Id) == null)
             { throw new ItemDoesNotExistException(); }
 
             context.ChangeTracker.Clear();

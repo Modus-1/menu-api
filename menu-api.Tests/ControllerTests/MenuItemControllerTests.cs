@@ -62,11 +62,11 @@ namespace menu_api.Tests.ControllerTests
             var item2 = new MenuItem() { Id = id2 };
 
 
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id2)).ReturnsAsync(item2);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id2)).ReturnsAsync(item2);
 
             //Act
-            var result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
 
             //Assert
             result.Value.Should()
@@ -81,10 +81,10 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             var id = Guid.NewGuid();
             MenuItem? item = null;
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
 
             //Act
-            var result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
 
             var notFoundObjectResult = result.Result as NotFoundObjectResult;
 
@@ -103,7 +103,7 @@ namespace menu_api.Tests.ControllerTests
                 );
 
             //Act
-            var result = await _controller.InsertMenuItem(item);
+            var result = await _controller.CreateMenuItem(item);
             var okResult = result as OkResult;
 
             //Assert
@@ -116,13 +116,13 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             var guid = Guid.NewGuid();
             var item = new MenuItem() { Id = Guid.NewGuid(), CategoryId = guid};
-            _menuItemRepo.Setup(x => x.InsertMenuItem(item)).ThrowsAsync(new ItemAlreadyExsistsException());
+            _menuItemRepo.Setup(x => x.CreateMenuItem(item)).ThrowsAsync(new ItemAlreadyExsistsException());
             _categoryRepository.Setup(repository => repository.GetAllCategories()).ReturnsAsync(
                 new List<Category>{new() {Id = guid}}
             );
 
             //Act
-            var result = await _controller.InsertMenuItem(item);
+            var result = await _controller.CreateMenuItem(item);
             var conflictResult = result as ConflictObjectResult;
 
             //Assert

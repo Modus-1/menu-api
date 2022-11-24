@@ -1,27 +1,28 @@
 ﻿using menu_api.Context;
 using menu_api.Exeptions;
 using menu_api.Models;
+using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Repositories
 {
     public class MenuItemIngredientRepository : IMenuItemIngredientRepository
     {
-        private readonly MenuContext context;
+        private readonly MenuContext _context;
 
         public MenuItemIngredientRepository(MenuContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         //Add ingredient to menuItem
-        public async Task AddIngredient(MenuItemIngredient menuItem_Ingredient)
+        public async Task AddIngredient(MenuItemIngredient menuItemIngredient)
         {
-            var ingredient = await context.Ingredients.FindAsync(menuItem_Ingredient.IngredientId);
-            var menuItem = await context.MenuItems.FindAsync(menuItem_Ingredient.MenuItemId);
+            var ingredient = await _context.Ingredients.FindAsync(menuItemIngredient.IngredientId);
+            var menuItem = await _context.MenuItems.FindAsync(menuItemIngredient.MenuItemId);
 
-            var _menuItem_Ingredient = await context.MenuItem_Ingredients.FindAsync(menuItem_Ingredient.MenuItemId, menuItem_Ingredient.IngredientId);
+            var foundMenuItemIngredient = await _context.MenuItem_Ingredients.FindAsync(menuItemIngredient.MenuItemId, menuItemIngredient.IngredientId);
 
-            if (_menuItem_Ingredient != null)
+            if (foundMenuItemIngredient != null)
             { throw new ItemAlreadyExsistsException(); }
 
             if (menuItem == null)
@@ -30,35 +31,35 @@ namespace menu_api.Repositories
             if (ingredient == null)
             { throw new ItemDoesNotExistException("Ingredient"); }
 
-            await context.MenuItem_Ingredients.AddAsync(menuItem_Ingredient);
-            await context.SaveChangesAsync();
+            await _context.MenuItem_Ingredients.AddAsync(menuItemIngredient);
+            await _context.SaveChangesAsync();
         }
 
         //remove ingredient from menuItem
         public async Task RemoveIngredient(Guid menuItemId, Guid ingredientId)
         {
-            MenuItemIngredient? menuItem_Ingredient = await context.MenuItem_Ingredients
+            var menuItemIngredient = await _context.MenuItem_Ingredients
                 .FindAsync(menuItemId, ingredientId);
 
-            if (menuItem_Ingredient == null)
+            if (menuItemIngredient == null)
             { throw new ItemDoesNotExistException(); }
 
-            context.MenuItem_Ingredients.Remove(menuItem_Ingredient);
-            await context.SaveChangesAsync();
+            _context.MenuItem_Ingredients.Remove(menuItemIngredient);
+            await _context.SaveChangesAsync();
         }
 
         //remove all ingredients from menuItem
         public async Task RemoveAllIngredients(Guid menuItemId)
         {
-            var menuItem = await context.MenuItems.FindAsync(menuItemId);
+            var menuItem = await _context.MenuItems.FindAsync(menuItemId);
 
             if (menuItem == null)
             { throw new ItemDoesNotExistException("MenuItem"); }
 
-            IEnumerable<MenuItemIngredient> menuItem_Ingredients = context.MenuItem_Ingredients
+            IEnumerable<MenuItemIngredient> menuItemIngredients = _context.MenuItem_Ingredients
                 .Where(x => x.MenuItemId == menuItemId);
-            context.MenuItem_Ingredients.RemoveRange(menuItem_Ingredients);
-            await context.SaveChangesAsync();
+            _context.MenuItem_Ingredients.RemoveRange(menuItemIngredients);
+            await _context.SaveChangesAsync();
         }
     }
 }

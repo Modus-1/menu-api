@@ -40,7 +40,7 @@ namespace menu_api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<MenuItem>> GetMenuItemById(Guid id)
+        public async Task<IActionResult> GetMenuItemById(Guid id)
         {
             var menuItem = await _menuItemRepository.GetMenuItemById(id);
             if (menuItem == null)

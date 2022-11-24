@@ -65,9 +65,11 @@ namespace menu_api.Tests.ControllerTests
 
             //Act
             var result = await _controller.GetMenuItemById(id);
+            var okObjectResult = result as OkObjectResult;
 
             //Assert
-            result.Value.Should()
+            okObjectResult.Should().NotBeNull();
+            okObjectResult?.Value.Should()
                 .NotBeNull()
                 .And.BeEquivalentTo(item)
                 .And.NotBeEquivalentTo(item2);
@@ -84,7 +86,7 @@ namespace menu_api.Tests.ControllerTests
             //Act
             var result = await _controller.GetMenuItemById(id);
 
-            var notFoundObjectResult = result.Result as NotFoundObjectResult;
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
             //Assert
             notFoundObjectResult.Should().NotBeNull();

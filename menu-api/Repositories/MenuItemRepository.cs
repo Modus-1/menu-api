@@ -1,6 +1,7 @@
 ﻿using menu_api.Context;
 using menu_api.Exceptions;
 using menu_api.Models;
+using menu_api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace menu_api.Repositories

@@ -2,59 +2,61 @@
 using menu_api.Models;
 using Microsoft.EntityFrameworkCore;
 using menu_api.Exeptions;
+using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Repositories
 {
     public class IngredientRepository : IIngredientRepository
     {
-        private readonly MenuContext context;
+        private readonly MenuContext _context;
 
         public IngredientRepository(MenuContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
-        public async Task<IEnumerable<Ingredient>?> GetAllIngredients()
+        public async Task<IEnumerable<Ingredient>> GetAllIngredients()
         {
-            return await context.Ingredients.ToListAsync();
+            return await _context.Ingredients.ToListAsync();
         }
 
-        public async Task<Ingredient?> GetIngredientByID(Guid ingredientId)
+        public async Task<Ingredient?> GetIngredientById(Guid ingredientId)
         {
-            return await context.Ingredients.FindAsync(ingredientId);
+            return await _context.Ingredients.FindAsync(ingredientId);
         }
 
-        public async Task InsertIngredient(Ingredient ingredient)
+        public async Task CreateIngredient(Ingredient ingredient)
         {
-            var _ingredient = await GetIngredientByID(ingredient.Id);
+            var foundIngredient = await GetIngredientById(ingredient.Id);
 
-            if (_ingredient != null)
+            if (foundIngredient != null)
             { throw new ItemAlreadyExsistsException(); }
 
-            await context.Ingredients.AddAsync(ingredient);
-            await context.SaveChangesAsync();
+            await _context.Ingredients.AddAsync(ingredient);
+            await _context.SaveChangesAsync();
         }
-        public async Task DeleteIngredient(Guid ingriedientId)
+        
+        public async Task DeleteIngredient(Guid ingredientId)
         {
-            Ingredient? ingredient = await context.Ingredients.FindAsync(ingriedientId);
+            var ingredient = await _context.Ingredients.FindAsync(ingredientId);
 
             if (ingredient == null) 
             { throw new ItemDoesNotExistException(); }
 
-            context.Ingredients.Remove(ingredient);
-            await context.SaveChangesAsync();
+            _context.Ingredients.Remove(ingredient);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateIngredient(Ingredient ingredient)
         {
-            var _ingredient = await context.Ingredients.SingleOrDefaultAsync(i => i.Id == ingredient.Id);
+            var foundIngredient = await _context.Ingredients.SingleOrDefaultAsync(i => i.Id == ingredient.Id);
 
-            if (_ingredient == null) 
+            if (foundIngredient == null) 
             { throw new ItemDoesNotExistException(); }
 
-            context.ChangeTracker.Clear();
-            context.Update(ingredient);
-            await context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+            _context.Update(ingredient);
+            await _context.SaveChangesAsync();
         }
     }
 }

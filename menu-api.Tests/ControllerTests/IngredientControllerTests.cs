@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
-using menu_api.Context;
 using menu_api.Controllers;
 using menu_api.Models;
-using menu_api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -11,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using menu_api.Exeptions;
+using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.ControllerTests
 {
@@ -54,11 +53,11 @@ namespace menu_api.Tests.ControllerTests
             Ingredient item2 = new Ingredient() { Id = id2 };
 
 
-            _ingredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
-            _ingredientRepo.Setup(x => x.GetIngredientByID(id2)).ReturnsAsync(item2);
+            _ingredientRepo.Setup(x => x.GetIngredientById(id)).ReturnsAsync(item);
+            _ingredientRepo.Setup(x => x.GetIngredientById(id2)).ReturnsAsync(item2);
 
             //Act
-            ActionResult<Ingredient> result = await _controller.GetIngredientByID(id);
+            ActionResult<Ingredient> result = await _controller.GetIngredientById(id);
 
             //Assert
             result.Value.Should()
@@ -73,10 +72,10 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             Guid id = Guid.NewGuid();
             Ingredient? item = null;
-            _ingredientRepo.Setup(x => x.GetIngredientByID(id)).ReturnsAsync(item);
+            _ingredientRepo.Setup(x => x.GetIngredientById(id)).ReturnsAsync(item);
 
             //Act
-            ActionResult<Ingredient> result = await _controller.GetIngredientByID(id);
+            ActionResult<Ingredient> result = await _controller.GetIngredientById(id);
 
             var NotFoundResult = result.Result as NotFoundObjectResult;
             var OKResult = result.Result as OkResult;
@@ -94,7 +93,7 @@ namespace menu_api.Tests.ControllerTests
 
 
             //Act
-            ActionResult result = await _controller.InsertIngredient(item);
+            ActionResult result = await _controller.CreateIngredient(item);
 
             var OKResult = result as OkResult;
             var ConflictResult = result as ConflictObjectResult;
@@ -109,11 +108,11 @@ namespace menu_api.Tests.ControllerTests
         {
             //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
-            _ingredientRepo.Setup(x => x.InsertIngredient(item)).ThrowsAsync(new ItemAlreadyExsistsException());
+            _ingredientRepo.Setup(x => x.CreateIngredient(item)).ThrowsAsync(new ItemAlreadyExsistsException());
 
 
             //Act
-            ActionResult result = await _controller.InsertIngredient(item);
+            ActionResult result = await _controller.CreateIngredient(item);
 
             var OKResult = result as OkResult;
             var ConflictResult = result as ConflictObjectResult;

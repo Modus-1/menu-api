@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using menu_api.Context;
 using menu_api.Controllers;
 using menu_api.Models;
 using menu_api.Repositories;
@@ -7,10 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.ControllerTests
@@ -116,7 +114,7 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             var guid = Guid.NewGuid();
             var item = new MenuItem() { Id = Guid.NewGuid(), CategoryId = guid};
-            _menuItemRepo.Setup(x => x.CreateMenuItem(item)).ThrowsAsync(new ItemAlreadyExsistsException());
+            _menuItemRepo.Setup(x => x.CreateMenuItem(item)).ThrowsAsync(new ItemAlreadyExistsException());
             _categoryRepository.Setup(repository => repository.GetAllCategories()).ReturnsAsync(
                 new List<Category>{new() {Id = guid}}
             );

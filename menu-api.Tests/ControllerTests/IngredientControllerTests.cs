@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.ControllerTests
@@ -108,7 +108,7 @@ namespace menu_api.Tests.ControllerTests
         {
             //Arrange
             Ingredient item = new Ingredient() { Id = Guid.NewGuid() };
-            _ingredientRepo.Setup(x => x.CreateIngredient(item)).ThrowsAsync(new ItemAlreadyExsistsException());
+            _ingredientRepo.Setup(x => x.CreateIngredient(item)).ThrowsAsync(new ItemAlreadyExistsException());
 
 
             //Act

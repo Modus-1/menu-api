@@ -1,5 +1,5 @@
 ﻿using menu_api.Context;
-using menu_api.Exeptions;
+using menu_api.Exceptions;
 using menu_api.Models;
 using menu_api.Repositories.Interfaces;
 
@@ -23,7 +23,7 @@ namespace menu_api.Repositories
             var foundMenuItemIngredient = await _context.MenuItem_Ingredients.FindAsync(menuItemIngredient.MenuItemId, menuItemIngredient.IngredientId);
 
             if (foundMenuItemIngredient != null)
-            { throw new ItemAlreadyExsistsException(); }
+            { throw new ItemAlreadyExistsException(); }
 
             if (menuItem == null)
             { throw new ItemDoesNotExistException("MenuItem"); }

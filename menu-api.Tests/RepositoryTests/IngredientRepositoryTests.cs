@@ -5,8 +5,8 @@ using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 
 namespace menu_api.Tests.RepositoryTests
 {
@@ -123,7 +123,7 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.CreateIngredient(ingredient);
 
             //Assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.CreateIngredient(ingredient));
+            await Assert.ThrowsAsync<ItemAlreadyExistsException>(async () => await _repository.CreateIngredient(ingredient));
         }
 
         [Fact]

@@ -1,7 +1,7 @@
 ﻿using menu_api.Context;
+using menu_api.Exceptions;
 using menu_api.Models;
 using Microsoft.EntityFrameworkCore;
-using menu_api.Exeptions;
 using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Repositories
@@ -30,7 +30,7 @@ namespace menu_api.Repositories
             var foundIngredient = await GetIngredientById(ingredient.Id);
 
             if (foundIngredient != null)
-            { throw new ItemAlreadyExsistsException(); }
+            { throw new ItemAlreadyExistsException(); }
 
             await _context.Ingredients.AddAsync(ingredient);
             await _context.SaveChangesAsync();

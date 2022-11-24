@@ -4,10 +4,9 @@ using menu_api.Models;
 using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 
 namespace menu_api.Tests.RepositoryTests
 {
@@ -141,7 +140,7 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.CreateMenuItem(menuItem);
 
             //Assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.CreateMenuItem(menuItem));
+            await Assert.ThrowsAsync<ItemAlreadyExistsException>(async () => await _repository.CreateMenuItem(menuItem));
         }
 
         [Fact]

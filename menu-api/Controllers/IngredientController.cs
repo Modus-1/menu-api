@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using menu_api.Models;
-using menu_api.Repositories;
-using menu_api.Context;
-using menu_api.Exeptions;
+using menu_api.Exceptions;
 using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Controllers
@@ -62,7 +60,7 @@ namespace menu_api.Controllers
                 await _ingredientRepository.CreateIngredient(ingredient);
                 return Ok();
             }
-            catch (ItemAlreadyExsistsException)
+            catch (ItemAlreadyExistsException)
             {
                 return Conflict("Ingredient already exists");
             }

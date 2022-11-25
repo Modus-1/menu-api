@@ -4,10 +4,9 @@ using menu_api.Models;
 using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 
 namespace menu_api.Tests.RepositoryTests
 {
@@ -38,7 +37,7 @@ namespace menu_api.Tests.RepositoryTests
             //Arrange
             for (var i = 0; i < 5; i++)
             {
-                await _repository.InsertMenuItem(new MenuItem
+                await _repository.CreateMenuItem(new MenuItem
                 {
                     Id = Guid.NewGuid(),
                     Name = $"Test Item {i}.",
@@ -67,10 +66,10 @@ namespace menu_api.Tests.RepositoryTests
                 Id = id,
                 Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
-            await _repository.InsertMenuItem(insertedItem);
+            await _repository.CreateMenuItem(insertedItem);
 
             //Act
-            var result = await _repository.GetMenuItemByID(id);
+            var result = await _repository.GetMenuItemById(id);
 
             //Assert
             result
@@ -86,7 +85,7 @@ namespace menu_api.Tests.RepositoryTests
             var id = Guid.NewGuid();
 
             //Act
-            var result = await _repository.GetMenuItemByID(id);
+            var result = await _repository.GetMenuItemById(id);
 
             //Assert
             result
@@ -111,8 +110,8 @@ namespace menu_api.Tests.RepositoryTests
             };
 
             //Act
-            await _repository.InsertMenuItem(menuItem);
-            var result = await _repository.GetMenuItemByID(menuItem.Id);
+            await _repository.CreateMenuItem(menuItem);
+            var result = await _repository.GetMenuItemById(menuItem.Id);
 
             //Assert
             result
@@ -138,10 +137,10 @@ namespace menu_api.Tests.RepositoryTests
             };
 
             //Act
-            await _repository.InsertMenuItem(menuItem);
+            await _repository.CreateMenuItem(menuItem);
 
             //Assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.InsertMenuItem(menuItem));
+            await Assert.ThrowsAsync<ItemAlreadyExistsException>(async () => await _repository.CreateMenuItem(menuItem));
         }
 
         [Fact]
@@ -172,14 +171,14 @@ namespace menu_api.Tests.RepositoryTests
                 Category = new Category { Id = Guid.NewGuid(), Name = "Test"}
             };
 
-            await _repository.InsertMenuItem(menuItem);
-            await _repository.InsertMenuItem(menuItem2);
+            await _repository.CreateMenuItem(menuItem);
+            await _repository.CreateMenuItem(menuItem2);
 
             //Act
             await _repository.DeleteMenuItem(menuItem.Id);
 
-            var newMenuItem = await _repository.GetMenuItemByID(menuItem.Id); //Should return null because it was previously deleted
-            var newMenuItem2 = await _repository.GetMenuItemByID(menuItem2.Id); //Should return menuItem2 because it was not deleted
+            var newMenuItem = await _repository.GetMenuItemById(menuItem.Id); //Should return null because it was previously deleted
+            var newMenuItem2 = await _repository.GetMenuItemById(menuItem2.Id); //Should return menuItem2 because it was not deleted
 
             //Assert
             Assert.Null(newMenuItem);
@@ -238,7 +237,7 @@ namespace menu_api.Tests.RepositoryTests
                 Category = menuItem.Category
             };
 
-            await _repository.InsertMenuItem(menuItem);
+            await _repository.CreateMenuItem(menuItem);
 
             //Act
             menuItem.Name = "boterham met kaas";
@@ -250,7 +249,7 @@ namespace menu_api.Tests.RepositoryTests
             menuItem.Category = new Category { Id = menuItem.Category.Id, Name = "hoi"};
 
             await _repository.UpdateMenuItem(menuItem);
-            var updatedMenuItem = await _repository.GetMenuItemByID(menuItem.Id);
+            var updatedMenuItem = await _repository.GetMenuItemById(menuItem.Id);
 
 
             //Asserts

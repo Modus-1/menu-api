@@ -8,6 +8,9 @@
     <UserSecretsId>de4a3c79-71b7-4438-bce4-1a17f57b08f7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    
+    <GenerateDocumentationFile>true</GenerateDocumentationFile> <!-- Generate xml comment fie for Swagger -->
+    <NoWarn>1591</NoWarn> <!-- Disable warning for "No XML comment on method" -->
   </PropertyGroup>
 
   <ItemGroup>

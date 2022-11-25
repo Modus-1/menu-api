@@ -16,6 +16,10 @@ public class CategoryController : ControllerBase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Gets all categories from the datastore.
+    /// </summary>
+    /// <returns>A list of all categories.</returns>
     [HttpGet]
     public async Task<IActionResult> GetAllCategories()
     {

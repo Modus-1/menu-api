@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using menu_api.Context;
 using menu_api.Controllers;
 using menu_api.Models;
 using menu_api.Repositories;
@@ -7,10 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.ControllerTests
@@ -62,14 +60,16 @@ namespace menu_api.Tests.ControllerTests
             var item2 = new MenuItem() { Id = id2 };
 
 
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id2)).ReturnsAsync(item2);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id2)).ReturnsAsync(item2);
 
             //Act
-            var result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
+            var okObjectResult = result as OkObjectResult;
 
             //Assert
-            result.Value.Should()
+            okObjectResult.Should().NotBeNull();
+            okObjectResult?.Value.Should()
                 .NotBeNull()
                 .And.BeEquivalentTo(item)
                 .And.NotBeEquivalentTo(item2);
@@ -81,12 +81,12 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             var id = Guid.NewGuid();
             MenuItem? item = null;
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
 
             //Act
-            var result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
 
-            var notFoundObjectResult = result.Result as NotFoundObjectResult;
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
             //Assert
             notFoundObjectResult.Should().NotBeNull();
@@ -103,7 +103,7 @@ namespace menu_api.Tests.ControllerTests
                 );
 
             //Act
-            var result = await _controller.InsertMenuItem(item);
+            var result = await _controller.CreateMenuItem(item);
             var okResult = result as OkResult;
 
             //Assert
@@ -116,13 +116,13 @@ namespace menu_api.Tests.ControllerTests
             //Arrange
             var guid = Guid.NewGuid();
             var item = new MenuItem() { Id = Guid.NewGuid(), CategoryId = guid};
-            _menuItemRepo.Setup(x => x.InsertMenuItem(item)).ThrowsAsync(new ItemAlreadyExsistsException());
+            _menuItemRepo.Setup(x => x.CreateMenuItem(item)).ThrowsAsync(new ItemAlreadyExistsException());
             _categoryRepository.Setup(repository => repository.GetAllCategories()).ReturnsAsync(
                 new List<Category>{new() {Id = guid}}
             );
 
             //Act
-            var result = await _controller.InsertMenuItem(item);
+            var result = await _controller.CreateMenuItem(item);
             var conflictResult = result as ConflictObjectResult;
 
             //Assert

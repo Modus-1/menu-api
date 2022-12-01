@@ -1,4 +1,6 @@
-﻿namespace menu_api.Models
+﻿using System.Text.Json.Serialization;
+
+namespace menu_api.Models
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -28,7 +30,8 @@
         [Required]
         public double Price { get; set; }
 
-        public int CategoryId { get; set; }
+        [Required] public Guid CategoryId { get; set; }
+        [JsonIgnore] public virtual Category? Category { get; set; }
 
         public List<MenuItemIngredient>? Ingredients { get; set; } = new List<MenuItemIngredient>();
     }

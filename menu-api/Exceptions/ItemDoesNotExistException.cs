@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
-
-namespace menu_api.Exeptions
+﻿namespace menu_api.Exceptions
 {
-    [Serializable]
     public class ItemDoesNotExistException : Exception
     {
         public ItemDoesNotExistException()
@@ -12,10 +9,6 @@ namespace menu_api.Exeptions
         public ItemDoesNotExistException(string? message) : base(message)
         {
 
-        }
-
-        protected ItemDoesNotExistException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
         }
     }
 }

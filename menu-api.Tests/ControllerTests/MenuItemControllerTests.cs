@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using menu_api.Context;
 using menu_api.Controllers;
 using menu_api.Models;
 using menu_api.Repositories;
@@ -7,32 +6,38 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
+using menu_api.Repositories.Interfaces;
 
 namespace menu_api.Tests.ControllerTests
 {
     public class MenuItemControllerTests
     {
         private readonly Mock<IMenuItemRepository> _menuItemRepo;
-        private readonly Mock<IMenuItemIngredientRepository> _menuItem_ingredientRepo;
+        private readonly Mock<IMenuItemIngredientRepository> _menuItemIngredientRepository;
+        private readonly Mock<ICategoryRepository> _categoryRepository;
         private readonly MenuItemController _controller;
 
         public MenuItemControllerTests()
         {
             _menuItemRepo = new Mock<IMenuItemRepository>();
-            _menuItem_ingredientRepo = new Mock<IMenuItemIngredientRepository>();
+            _menuItemIngredientRepository = new Mock<IMenuItemIngredientRepository>();
+            _categoryRepository = new Mock<ICategoryRepository>();
 
-            _controller = new MenuItemController(_menuItemRepo.Object, _menuItem_ingredientRepo.Object);
+            _controller = new MenuItemController(
+                _menuItemRepo.Object, 
+                _menuItemIngredientRepository.Object, 
+                _categoryRepository.Object
+                );
         }
 
         [Fact]
         public async Task GetMenuItems_ReturnsMenuItemList()
         {
             //Arrange
-            IEnumerable<MenuItem> items = new List<MenuItem>() { new MenuItem(), new MenuItem(), new MenuItem(), new MenuItem() };
+            IEnumerable<MenuItem> items = new List<MenuItem>() { new(), new(), new(), new() };
 
             _menuItemRepo.Setup(x => x.GetMenuItems()).ReturnsAsync(items);
 
@@ -42,28 +47,29 @@ namespace menu_api.Tests.ControllerTests
             //Assert
             result.Should()
                 .NotBeNull()
-                .And.BeOfType<List<MenuItem>>();
-            Assert.Equal(4, result.Count());
+                .And.HaveCount(4);
         }
 
         [Fact]
         public async Task GetMenuItemById_ReturnsCorrectMenuItem()
         {
             //Arrange
-            Guid id = Guid.NewGuid();
-            Guid id2 = Guid.NewGuid();
-            MenuItem item = new MenuItem() { Id = id };
-            MenuItem item2 = new MenuItem() { Id = id2 };
+            var id = Guid.NewGuid();
+            var id2 = Guid.NewGuid();
+            var item = new MenuItem() { Id = id };
+            var item2 = new MenuItem() { Id = id2 };
 
 
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id2)).ReturnsAsync(item2);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id2)).ReturnsAsync(item2);
 
             //Act
-            ActionResult<MenuItem> result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
+            var okObjectResult = result as OkObjectResult;
 
             //Assert
-            result.Value.Should()
+            okObjectResult.Should().NotBeNull();
+            okObjectResult?.Value.Should()
                 .NotBeNull()
                 .And.BeEquivalentTo(item)
                 .And.NotBeEquivalentTo(item2);
@@ -73,173 +79,157 @@ namespace menu_api.Tests.ControllerTests
         public async Task GetMenuItemById_ShouldReturnNull_IfTableIsEmpty()
         {
             //Arrange
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             MenuItem? item = null;
-            _menuItemRepo.Setup(x => x.GetMenuItemByID(id)).ReturnsAsync(item);
+            _menuItemRepo.Setup(x => x.GetMenuItemById(id)).ReturnsAsync(item);
 
             //Act
-            ActionResult<MenuItem> result = await _controller.GetMenuItemByID(id);
+            var result = await _controller.GetMenuItemById(id);
 
-            var NotFoundResult = result.Result as NotFoundObjectResult;
-            var OKResult = result.Result as OkResult;
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
             //Assert
-            NotFoundResult.Should().NotBeNull();
-            OKResult.Should().BeNull();
+            notFoundObjectResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task InsertMenuItem_ShouldReturnOK_WhenSuccessful()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
-
+            var categoryGuid = Guid.NewGuid();
+            var item = new MenuItem() { Id = Guid.NewGuid(), CategoryId = categoryGuid};
+            _categoryRepository.Setup(repository => repository.GetAllCategories()).ReturnsAsync(
+                new List<Category> {new() {Id = categoryGuid}}
+                );
 
             //Act
-            ActionResult result = await _controller.InsertMenuItem(item);
-
-            var OKResult = result as OkResult;
-            var ConflictResult = result as ConflictObjectResult;
+            var result = await _controller.CreateMenuItem(item);
+            var okResult = result as OkResult;
 
             //Assert
-            OKResult.Should().NotBeNull();
-            ConflictResult.Should().BeNull();
+            okResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task InsertMenuItem_ShouldReturnConflict_WhenFailed()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
-            _menuItemRepo.Setup(x => x.InsertMenuItem(item)).ThrowsAsync(new ItemAlreadyExsistsException());
-
+            var guid = Guid.NewGuid();
+            var item = new MenuItem() { Id = Guid.NewGuid(), CategoryId = guid};
+            _menuItemRepo.Setup(x => x.CreateMenuItem(item)).ThrowsAsync(new ItemAlreadyExistsException());
+            _categoryRepository.Setup(repository => repository.GetAllCategories()).ReturnsAsync(
+                new List<Category>{new() {Id = guid}}
+            );
 
             //Act
-            ActionResult result = await _controller.InsertMenuItem(item);
-
-            var OKResult = result as OkResult;
-            var ConflictResult = result as ConflictObjectResult;
+            var result = await _controller.CreateMenuItem(item);
+            var conflictResult = result as ConflictObjectResult;
 
             //Assert
-            OKResult.Should().BeNull();
-            ConflictResult.Should().NotBeNull();
+            conflictResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task DeleteMenuItem_ShouldReturnOK_WhenSuccessful()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
+            var item = new MenuItem() { Id = Guid.NewGuid() };
 
 
             //Act
-            ActionResult result = await _controller.DeleteMenuItem(item.Id);
+            var result = await _controller.DeleteMenuItem(item.Id);
 
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var okResult = result as OkResult;
 
             //Assert
-            OKResult.Should().NotBeNull();
-            NotFoundResult.Should().BeNull();
+            okResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task DeleteMenuItem_ShouldReturnNotFound_WhenFailed()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
+            var item = new MenuItem() { Id = Guid.NewGuid() };
             _menuItemRepo.Setup(x => x.DeleteMenuItem(item.Id)).ThrowsAsync(new ItemDoesNotExistException());
 
             //Act
-            ActionResult result = await _controller.DeleteMenuItem(item.Id);
+            var result = await _controller.DeleteMenuItem(item.Id);
 
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
             //Assert
-            OKResult.Should().BeNull();
-            NotFoundResult.Should().NotBeNull();
+            notFoundObjectResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task UpdateMenuItem_ShouldReturnOK_WhenSuccessful()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
+            var item = new MenuItem() { Id = Guid.NewGuid() };
 
 
             //Act
-            ActionResult result = await _controller.UpdateMenuItem(item);
+            var result = await _controller.UpdateMenuItem(item);
 
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var okResult = result as OkResult;
 
             //Assert
-            OKResult.Should().NotBeNull();
-            NotFoundResult.Should().BeNull();
+            okResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task UpdateMenuItem_ShouldReturnNotFound_WhenFailed()
         {
             //Arrange
-            MenuItem item = new MenuItem() { Id = Guid.NewGuid() };
+            var item = new MenuItem() { Id = Guid.NewGuid() };
             _menuItemRepo.Setup(x => x.UpdateMenuItem(item)).ThrowsAsync(new ItemDoesNotExistException());
 
             //Act
-            ActionResult result = await _controller.UpdateMenuItem(item);
+            var result = await _controller.UpdateMenuItem(item);
 
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
             //Assert
-            OKResult.Should().BeNull();
-            NotFoundResult.Should().NotBeNull();
+            notFoundObjectResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task AddIngredientToMenuItem_ShouldReturnOK_WhenSuccessful()
         {
             //Arrange
-            MenuItemIngredient item = new MenuItemIngredient()
+            var item = new MenuItemIngredient()
             {
                 IngredientId = Guid.NewGuid(),
                 MenuItemId = Guid.NewGuid()
             };
 
             //Act
-            ActionResult result = await _controller.AddIngredientToMenuItem(item);
-
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var result = await _controller.AddIngredientToMenuItem(item);
+            var okResult = result as OkResult;
 
 
             //Assert
-            OKResult.Should().NotBeNull();
-            NotFoundResult.Should().BeNull();
+            okResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task AddIngredientToMenuItem_ShouldReturnNotFound_WhenFailed()
         {
             //Arrange
-            MenuItemIngredient item = new MenuItemIngredient()
+            var item = new MenuItemIngredient()
             {
                 IngredientId = Guid.NewGuid(),
                 MenuItemId = Guid.NewGuid()
             };
-            _menuItem_ingredientRepo.Setup(x => x.AddIngredient(item)).ThrowsAsync(new ItemDoesNotExistException());
+            _menuItemIngredientRepository.Setup(x => x.AddIngredient(item)).ThrowsAsync(new ItemDoesNotExistException());
 
             //Act
-            ActionResult result = await _controller.AddIngredientToMenuItem(item);
-
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var result = await _controller.AddIngredientToMenuItem(item);
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
 
             //Assert
-            OKResult.Should().BeNull();
-            NotFoundResult.Should().NotBeNull();
+            notFoundObjectResult.Should().NotBeNull();
         }
 
 
@@ -247,45 +237,40 @@ namespace menu_api.Tests.ControllerTests
         public async Task DeleteIngredientFromMenuItem_ShouldReturnOK_WhenSuccessful()
         {
             //Arrange
-            MenuItemIngredient item = new MenuItemIngredient()
+            var item = new MenuItemIngredient()
             {
                 IngredientId = Guid.NewGuid(),
                 MenuItemId = Guid.NewGuid()
             };
 
             //Act
-            ActionResult result = await _controller.DeleteIngredientFromMenuItem(item.MenuItemId, item.IngredientId);
+            var result = await _controller.DeleteIngredientFromMenuItem(item.MenuItemId, item.IngredientId);
 
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var okResult = result as OkResult;
 
 
             //Assert
-            OKResult.Should().NotBeNull();
-            NotFoundResult.Should().BeNull();
+            okResult.Should().NotBeNull();
         }
 
         [Fact]
         public async Task DeleteIngredientFromMenuItem_ShouldReturnNotFound_WhenFailed()
         {
             //Arrange
-            MenuItemIngredient item = new MenuItemIngredient()
+            var item = new MenuItemIngredient()
             {
                 IngredientId = Guid.NewGuid(),
                 MenuItemId = Guid.NewGuid()
             };
-            _menuItem_ingredientRepo.Setup(x => x.RemoveIngredient(item.MenuItemId, item.IngredientId)).ThrowsAsync(new ItemDoesNotExistException());
+            _menuItemIngredientRepository.Setup(x => x.RemoveIngredient(item.MenuItemId, item.IngredientId)).ThrowsAsync(new ItemDoesNotExistException());
 
             //Act
-            ActionResult result = await _controller.DeleteIngredientFromMenuItem(item.MenuItemId, item.IngredientId);
-
-            var OKResult = result as OkResult;
-            var NotFoundResult = result as NotFoundObjectResult;
+            var result = await _controller.DeleteIngredientFromMenuItem(item.MenuItemId, item.IngredientId);
+            var notFoundObjectResult = result as NotFoundObjectResult;
 
 
             //Assert
-            OKResult.Should().BeNull();
-            NotFoundResult.Should().NotBeNull();
+            notFoundObjectResult.Should().NotBeNull();
         }
 
     }

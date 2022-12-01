@@ -1,0 +1,407 @@
+[
+    {
+        "method": "get",
+        "path": "/api/Category",
+        "description": [
+            "Gets all categories from the datastore."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all categories.",
+                "data": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Appetizers"
+                    },
+                    {
+                        "id": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                        "name": "Main Courses"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "method": "get",
+        "path": "/api/Ingredient",
+        "description": [
+            "Gets all ingredients from the datastore."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all ingredients.",
+                "data": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Peanut",
+                        "stock": 2,
+                        "weight": 2.50,
+                        "allergens": "nuts"
+                    },
+                    {
+                        "id": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                        "name": "Whole Milk",
+                        "stock": 9,
+                        "weight": 1.9,
+                        "allergens": "lactose"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "method": "post",
+        "path": "/api/Ingredient",
+        "description": [
+            "Creates a new ingredient in the datastore."
+        ],
+        "requestBody": {
+            "type": "json",
+            "data": {
+                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "name": "Peanut",
+                "stock": 2,
+                "weight": 2.50,
+                "allergens": "nuts"
+            }
+        },
+        "responseBodies": {
+            "409": {
+                "type": "json",
+                "description": "Ingredient already exists.",
+                "data": "Ingredient already exists"
+            }
+        }
+    },
+    {
+        "method": "patch",
+        "path": "/api/Ingredient",
+        "description": [
+            "Updates the information related to an ingredient."
+        ],
+        "requestBody": {
+            "type": "json",
+            "data": {
+                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "name": "Peanut",
+                "stock": 2,
+                "weight": 2.50,
+                "allergens": "nuts"
+            }
+        },
+        "responseBodies": {
+            "404": {
+                "type": "json",
+                "description": "Ingredient not found.",
+                "data": "Ingredient not found."
+            }
+        }
+    },
+    {
+        "method": "get",
+        "path": "/api/Ingredient/{id}",
+        "description": [
+            "Gets a single ingredient by its GUID."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all categories.",
+                "data": {
+                    "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                    "name": "Peanut",
+                    "stock": 2,
+                    "weight": 2.50,
+                    "allergens": "nuts"
+                }
+            },
+            "404": {
+                "type": "json",
+                "description": "Ingredient not found.",
+                "data": "Ingredient not found."
+            }
+        }
+    },
+    {
+        "method": "delete",
+        "path": "/api/Ingredient/{id}",
+        "description": [
+            "Deletes an ingredient from the datastore."
+        ],
+        "responseBodies": {
+            "404": {
+                "type": "json",
+                "description": "Ingredient not found.",
+                "data": "Ingredient not found."
+            }
+        }
+    },
+    {
+        "method": "get",
+        "path": "/api/MenuItem",
+        "description": [
+            "Gets all menu items from the datastore."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all ingredients.",
+                "data": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Custard",
+                        "iconUrl": "https://www.example.com/icon.png",
+                        "bannerUrl": "https://www.example.com/banner.png",
+                        "longDescription": "This is a long description.",
+                        "shortDescription": "And this is short.",
+                        "price": 3.99,
+                        "categoryId": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                        "ingredients": [
+                            {
+                                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                                "name": "Peanut",
+                                "stock": 2,
+                                "weight": 2.50,
+                                "allergens": "nuts"
+                            },
+                            {
+                                "id": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                                "name": "Whole Milk",
+                                "stock": 2,
+                                "weight": 2.50,
+                                "allergens": "lactose"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "method": "post",
+        "path": "/api/MenuItem",
+        "description": [
+            "Adds a new menu item to the datastore."
+        ],
+        "requestBody": {
+            "type": "json",
+            "description": "The menu item to add.",
+            "data": {
+                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "name": "Custard",
+                "iconUrl": "https://www.example.com/icon.png",
+                "bannerUrl": "https://www.example.com/banner.png",
+                "longDescription": "This is a long description.",
+                "shortDescription": "And this is short.",
+                "price": 3.99,
+                "categoryId": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                "ingredients": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Peanut",
+                        "stock": 2,
+                        "weight": 2.50,
+                        "allergens": "nuts"
+                    },
+                    {
+                        "id": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Whole Milk",
+                        "stock": 2,
+                        "weight": 2.50,
+                        "allergens": "lactose"
+                    }
+                ]
+            }
+        },
+        "responseBodies": {
+            "400": {
+                "type": "json",
+                "description": "Category does not exist.",
+                "data": "Category does not exist."
+            },
+            "409": {
+                "type": "json",
+                "description": "MenuItem already exists.",
+                "data": "MenuItem already exists."
+            }
+        }
+    },
+    {
+        "method": "patch",
+        "path": "/api/MenuItem",
+        "description": [
+            "Updates the information associated with a specific menu item."
+        ],
+        "requestBody": {
+            "type": "json",
+            "description": "The new information to replace the menu item with.",
+            "data": {
+                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "name": "Custard",
+                "iconUrl": "https://www.example.com/icon.png",
+                "bannerUrl": "https://www.example.com/banner.png",
+                "longDescription": "This is a long description.",
+                "shortDescription": "And this is short.",
+                "price": 3.99,
+                "categoryId": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                "ingredients": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Peanut",
+                        "stock": 2,
+                        "weight": 2.50,
+                        "allergens": "nuts"
+                    },
+                    {
+                        "id": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Whole Milk",
+                        "stock": 2,
+                        "weight": 2.50,
+                        "allergens": "lactose"
+                    }
+                ]
+            }
+        },
+        "responseBodies": {
+            "404": {
+                "type": "json",
+                "description": "MenuItem Not found",
+                "data": "MenuItem Not found"
+            }
+        }
+    },
+    {
+        "method": "get",
+        "path": "/api/MenuItem/{id}",
+        "description": [
+            "Gets a menu item by id from the datastore."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all ingredients.",
+                "data": {
+                    "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                    "name": "Custard",
+                    "iconUrl": "https://www.example.com/icon.png",
+                    "bannerUrl": "https://www.example.com/banner.png",
+                    "longDescription": "This is a long description.",
+                    "shortDescription": "And this is short.",
+                    "price": 3.99,
+                    "categoryId": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                    "ingredients": [
+                        {
+                            "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                            "name": "Peanut",
+                            "stock": 2,
+                            "weight": 2.50,
+                            "allergens": "nuts"
+                        },
+                        {
+                            "id": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                            "name": "Whole Milk",
+                            "stock": 2,
+                            "weight": 2.50,
+                            "allergens": "lactose"
+                        }
+                    ]
+                }
+            },
+            "404": {
+                "type": "json",
+                "description": "MenuItem Not found",
+                "data": "MenuItem Not found"
+            }
+        }
+    },
+    {
+        "method": "delete",
+        "path": "/api/MenuItem/{id}",
+        "description": [
+            "Deletes a menu item from the datastore by id."
+        ],
+        "responseBodies": {
+            "404": {
+                "type": "json",
+                "description": "MenuItem Not found",
+                "data": "MenuItem Not found"
+            }
+        }
+    },
+    {
+        "method": "get",
+        "path": "/category/{categoryId}",
+        "description": [
+            "Gets all menu items with a specific category by id."
+        ],
+        "responseBodies": {
+            "200": {
+                "type": "json",
+                "description": "A list of all menu items associated with the given category id.",
+                "data": [
+                    {
+                        "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                        "name": "Custard",
+                        "iconUrl": "https://www.example.com/icon.png",
+                        "bannerUrl": "https://www.example.com/banner.png",
+                        "longDescription": "This is a long description.",
+                        "shortDescription": "And this is short.",
+                        "price": 3.99,
+                        "categoryId": "f7b9ba83-e7eb-4647-9ff4-ee2ab5dcff35",
+                        "ingredients": [
+                            {
+                                "id": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                                "name": "Peanut",
+                                "stock": 2,
+                                "weight": 2.50,
+                                "allergens": "nuts"
+                            },
+                            {
+                                "id": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                                "name": "Whole Milk",
+                                "stock": 2,
+                                "weight": 2.50,
+                                "allergens": "lactose"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "method": "post",
+        "path": "/api/MenuItem/ingredient",
+        "description": [
+            "Adds an ingredient to a specific menu item."
+        ],
+        "requestBody": {
+            "type": "json",
+            "data": {
+                "menuItemId": "57aa8ea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "ingredientId": "57addea7-369b-4dcc-a6bc-2635a8f3e91f",
+                "name": "Peanut",
+                "stock": 2,
+                "weight": 2.50,
+                "allergens": "nuts"
+            }
+        },
+        "responseBodies": {}
+    },
+    {
+        "method": "delete",
+        "path": "/api/MenuItem/ingredient",
+        "description": [
+            "Deletes an ingredient from a specific menu item by id."
+        ],
+        "responseBodies": {
+            "404": {
+                "type": "json",
+                "description": "Ingredient not found in menu item.",
+                "data": "Ingredient not found in menu item."
+            }
+        }
+    }
+]

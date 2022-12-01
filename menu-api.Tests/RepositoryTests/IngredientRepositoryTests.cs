@@ -5,8 +5,8 @@ using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
-using menu_api.Exeptions;
 
 namespace menu_api.Tests.RepositoryTests
 {
@@ -35,9 +35,9 @@ namespace menu_api.Tests.RepositoryTests
         public async Task GetIngredients_WithPopulatedTable_ShouldReturnAllIngredients()
         {
             //Arrange
-            await _repository.InsertIngredient(new Ingredient());
-            await _repository.InsertIngredient(new Ingredient());
-            await _repository.InsertIngredient(new Ingredient());
+            await _repository.CreateIngredient(new Ingredient());
+            await _repository.CreateIngredient(new Ingredient());
+            await _repository.CreateIngredient(new Ingredient());
 
             //Act
             var results = await _repository.GetAllIngredients();
@@ -56,10 +56,10 @@ namespace menu_api.Tests.RepositoryTests
         {
             //Arrange
             Guid id = Guid.NewGuid();
-            await _repository.InsertIngredient(new Ingredient { Id = id });
+            await _repository.CreateIngredient(new Ingredient { Id = id });
 
             //Act
-            var result = await _repository.GetIngredientByID(id);
+            var result = await _repository.GetIngredientById(id);
 
             //Assert
             result
@@ -75,7 +75,7 @@ namespace menu_api.Tests.RepositoryTests
             Guid id = Guid.NewGuid();
 
             //Act
-            var result = await _repository.GetIngredientByID(id);
+            var result = await _repository.GetIngredientById(id);
 
             //Assert
             result
@@ -96,8 +96,8 @@ namespace menu_api.Tests.RepositoryTests
             };
 
             //Act
-            await _repository.InsertIngredient(ingredient);
-            var result = await _repository.GetIngredientByID(ingredient.Id);
+            await _repository.CreateIngredient(ingredient);
+            var result = await _repository.GetIngredientById(ingredient.Id);
 
             //Assert
             result
@@ -120,10 +120,10 @@ namespace menu_api.Tests.RepositoryTests
             };
 
             //Act
-            await _repository.InsertIngredient(ingredient);
+            await _repository.CreateIngredient(ingredient);
 
             //Assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.InsertIngredient(ingredient));
+            await Assert.ThrowsAsync<ItemAlreadyExistsException>(async () => await _repository.CreateIngredient(ingredient));
         }
 
         [Fact]
@@ -146,14 +146,14 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = "melkies ofz"
             };
 
-            await _repository.InsertIngredient(ingredient);
-            await _repository.InsertIngredient(ingredient2);
+            await _repository.CreateIngredient(ingredient);
+            await _repository.CreateIngredient(ingredient2);
 
             //Act
             await _repository.DeleteIngredient(ingredient.Id);
 
-            var newIngredient = await _repository.GetIngredientByID(ingredient.Id); //Should return null because it was previously deleted
-            var newIngredient2 = await _repository.GetIngredientByID(ingredient2.Id); //Should return newIngredient2 because it was not deleted
+            var newIngredient = await _repository.GetIngredientById(ingredient.Id); //Should return null because it was previously deleted
+            var newIngredient2 = await _repository.GetIngredientById(ingredient2.Id); //Should return newIngredient2 because it was not deleted
 
             //Assert
             Assert.Null(newIngredient);
@@ -202,7 +202,7 @@ namespace menu_api.Tests.RepositoryTests
                 Allergens = ingredient.Allergens
             };
 
-            await _repository.InsertIngredient(ingredient);
+            await _repository.CreateIngredient(ingredient);
 
             //Act
             ingredient.Name = "boterham met kaas";
@@ -210,7 +210,7 @@ namespace menu_api.Tests.RepositoryTests
             ingredient.Allergens = "niks ofz";
 
             await _repository.UpdateIngredient(ingredient);
-            var updatedMenuItem = await _repository.GetIngredientByID(ingredient.Id);
+            var updatedMenuItem = await _repository.GetIngredientById(ingredient.Id);
 
 
             //Asserts

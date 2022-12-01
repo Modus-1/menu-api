@@ -1,21 +1,21 @@
 ﻿using FluentAssertions;
 using menu_api.Context;
-using menu_api.Exeptions;
 using menu_api.Models;
 using menu_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using menu_api.Exceptions;
 using Xunit;
 
 namespace menu_api.Tests.RepositoryTests
 {
-    public class MenuItem_IngredientRepositoryTests : IDisposable
+    public class MenuItemIngredientRepositoryTests : IDisposable
     {
         private readonly MenuItemIngredientRepository _repository;
         private readonly MenuContext _context;
 
-        public MenuItem_IngredientRepositoryTests()
+        public MenuItemIngredientRepositoryTests()
         {
             var options =
                 new DbContextOptionsBuilder<MenuContext>()
@@ -74,7 +74,7 @@ namespace menu_api.Tests.RepositoryTests
             await _repository.AddIngredient(menuItem_Ingredient);
 
             //Assert
-            await Assert.ThrowsAsync<ItemAlreadyExsistsException>(async () => await _repository.AddIngredient(menuItem_Ingredient));
+            await Assert.ThrowsAsync<ItemAlreadyExistsException>(async () => await _repository.AddIngredient(menuItem_Ingredient));
         }
 
         [Fact]

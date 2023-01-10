@@ -3,12 +3,11 @@
     using Microsoft.EntityFrameworkCore;
     using menu_api.Models;
 
-
     public class MenuContext : DbContext
     {
         public MenuContext(DbContextOptions options) : base(options)
         {
-
+            Database.EnsureCreated();
         }
 
         public DbSet<MenuItem> MenuItems { get; set; }
